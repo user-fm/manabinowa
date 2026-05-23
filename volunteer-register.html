@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ボランティア登録フォーム | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="profile.html">プロフィール</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="login.html">ログイン</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="eyebrow">Volunteer Entry</div>
+        <h1>ボランティア登録フォーム</h1>
+        <p>本人確認・資格確認・対応可能分野を登録し、学校側の審査後に募集へ応募できます。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container split">
+        <aside class="card card-pad">
+          <h3>審査で確認する内容</h3>
+          <div class="list">
+            <div class="list-item"><span class="icon">本</span><div><h3>本人確認</h3><p>氏名、連絡先、所属を確認</p></div></div>
+            <div class="list-item"><span class="icon">資</span><div><h3>資格・経験</h3><p>教科、部活動、専門領域</p></div></div>
+            <div class="list-item"><span class="icon">同</span><div><h3>安全同意</h3><p>ログ保存と通報機能への同意</p></div></div>
+          </div>
+        </aside>
+        <form class="form-panel" data-demo-form data-success="ボランティア登録内容を受け付けました。">
+          <h2>登録内容</h2>
+          <div class="form-grid">
+            <label class="field"><span>氏名</span><input type="text" placeholder="山田 太郎"></label>
+            <label class="field"><span>ふりがな</span><input type="text" placeholder="やまだ たろう"></label>
+            <label class="field"><span>メールアドレス</span><input type="email" placeholder="supporter@example.jp"></label>
+            <label class="field"><span>電話番号</span><input type="tel" placeholder="090-0000-0000"></label>
+            <label class="field"><span>対応分野</span><select><option>学習支援</option><option>課外活動補助</option><option>地域連携</option><option>複数対応</option></select></label>
+            <label class="field"><span>対応形式</span><select><option>オンライン中心</option><option>対面中心</option><option>両方可</option></select></label>
+            <label class="field full"><span>資格・経験</span><textarea placeholder="教員免許、指導経験、専門スキルなど"></textarea></label>
+            <label class="field full"><span>自己PR</span><textarea placeholder="学校や生徒にどのような支援ができるか"></textarea></label>
+          </div>
+          <label class="check-row"><input type="checkbox" required><span>本人確認、活動ログ保存、学校側の確認に同意します。</span></label>
+          <button class="btn btn-primary" type="submit">審査に進む</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

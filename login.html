@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="board-post.html">掲示板</a></li><li><a href="applications.html">応募履歴</a></li><li><a href="profile.html">プロフィール</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="register.html">新規登録</a></div>
+  </header>
+
+  <main class="page-main">
+    <div class="container auth-shell">
+      <section class="auth-visual">
+        <div class="eyebrow">Secure Login</div>
+        <h1>学校アカウントで、安全に入室。</h1>
+        <p>Google Workspace連携を前提に、教員・生徒・サポーター・管理者の権限を分けて利用できます。</p>
+        <div class="tag-list"><span class="tag">Google OAuth2</span><span class="tag">ログイン履歴</span><span class="tag">ロール管理</span></div>
+      </section>
+      <section class="auth-card">
+        <div class="eyebrow">Login</div>
+        <h1 class="page-title">ログイン</h1>
+        <form class="grid" data-demo-form data-success="ログイン情報を確認しました。実装時は認証処理に接続します。">
+          <button class="btn btn-primary" type="submit">Googleアカウントでログイン</button>
+          <div class="divider">または</div>
+          <label class="field"><span>メールアドレス</span><input type="email" placeholder="school@example.jp" autocomplete="email"></label>
+          <label class="field"><span>パスワード</span><input id="login-password" type="password" autocomplete="current-password" placeholder="8文字以上"></label>
+          <button class="btn btn-plain" type="button" data-password-toggle="#login-password">表示</button>
+          <button class="btn btn-primary" type="submit">ログイン</button>
+        </form>
+        <p class="helper">アカウントをお持ちでない場合は <a href="register.html">新規登録</a> へ進んでください。</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

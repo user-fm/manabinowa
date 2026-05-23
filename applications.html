@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>応募履歴一覧 | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="applications.html" aria-current="page">応募履歴</a></li><li><a href="profile.html">プロフィール</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-primary" href="opportunities.html">追加で応募</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero slim">
+      <div class="container">
+        <div class="eyebrow">Applications</div>
+        <h1>応募履歴一覧</h1>
+        <p>応募した募集の審査状況、日程調整、活動完了までの履歴を確認できます。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container grid grid-4">
+        <article class="card card-pad"><span class="eyebrow">Applied</span><h3>4件</h3><p>応募中</p></article>
+        <article class="card card-pad"><span class="eyebrow">Approved</span><h3>2件</h3><p>承認済み</p></article>
+        <article class="card card-pad"><span class="eyebrow">Done</span><h3>8件</h3><p>完了</p></article>
+        <article class="card card-pad"><span class="eyebrow">Review</span><h3>1件</h3><p>差し戻し</p></article>
+      </div>
+      <div class="container form-panel" style="margin-top:1.2rem">
+        <h2>履歴</h2>
+        <div class="list">
+          <div class="list-item"><span class="icon">数</span><div><h3>中2数学の質問対応</h3><p>2026/05/21 応募 / 〇〇中学校</p></div><span class="badge gold">承認待ち</span></div>
+          <div class="list-item"><span class="icon">音</span><div><h3>吹奏楽部パート練習相談</h3><p>2026/05/15 承認 / 日程調整中</p></div><span class="badge">調整中</span></div>
+          <div class="list-item"><span class="icon">地</span><div><h3>地域行事ポスター制作</h3><p>2026/05/02 完了 / 活動ログ提出済み</p></div><span class="badge">完了</span></div>
+          <div class="list-item"><span class="icon">英</span><div><h3>英語スピーキング練習</h3><p>2026/04/26 差し戻し / 対応時間の再入力が必要</p></div><span class="badge gold">要対応</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

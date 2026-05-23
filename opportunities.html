@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>募集一覧 | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html" aria-current="page">募集一覧</a></li><li><a href="board-post.html">掲示板</a></li><li><a href="applications.html">応募履歴</a></li><li><a href="profile.html">プロフィール</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-primary" href="volunteer-register.html">サポーター登録</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero slim">
+      <div class="container">
+        <div class="eyebrow">Opportunities</div>
+        <h1>募集一覧</h1>
+        <p>学習支援、課外活動補助、地域連携の依頼を探して応募できます。</p>
+        <form class="search-panel" data-demo-form data-success="検索条件を反映しました。">
+          <label><span>キーワード</span><input type="search" placeholder="数学、吹奏楽、ポスター"></label>
+          <label><span>地域</span><select><option>すべて</option><option>東京都</option><option>神奈川県</option><option>オンライン</option></select></label>
+          <label><span>実施形式</span><select><option>すべて</option><option>オンライン</option><option>対面</option><option>ハイブリッド</option></select></label>
+          <button class="btn btn-primary" type="submit">検索</button>
+        </form>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container">
+        <div class="toolbar">
+          <div class="filter-tabs" data-filter-group>
+            <button class="filter-btn is-active" type="button" data-filter="all">すべて</button>
+            <button class="filter-btn" type="button" data-filter="study">学習支援</button>
+            <button class="filter-btn" type="button" data-filter="club">課外活動</button>
+            <button class="filter-btn" type="button" data-filter="local">地域連携</button>
+          </div>
+          <a class="btn btn-secondary" href="board-post.html">依頼を投稿</a>
+        </div>
+        <div class="grid grid-3">
+          <article class="card opportunity-card" data-filter-item data-category="study"><div class="card-art"><span class="badge gold">学習支援</span></div><div class="card-pad"><h3>中2数学の質問対応</h3><div class="meta-list"><span>オンライン</span><span>週1回</span><span>承認制</span></div><p>基礎問題のつまずきをチャットで支援します。</p><div class="tag-list"><span class="tag">数学</span><span class="tag">夕方</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+          <article class="card opportunity-card" data-filter-item data-category="study"><div class="card-art leaf"><span class="badge gold">学習支援</span></div><div class="card-pad"><h3>英語スピーキング練習</h3><div class="meta-list"><span>ビデオ通話</span><span>月2回</span></div><p>短い会話練習と発音チェックを行います。</p><div class="tag-list"><span class="tag">英語</span><span class="tag">オンライン</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+          <article class="card opportunity-card" data-filter-item data-category="club"><div class="card-art gold"><span class="badge">課外活動</span></div><div class="card-pad"><h3>吹奏楽部パート練習相談</h3><div class="meta-list"><span>オンライン</span><span>土曜</span></div><p>練習メニューと演奏の改善点を助言します。</p><div class="tag-list"><span class="tag">音楽</span><span class="tag">部活動</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+          <article class="card opportunity-card" data-filter-item data-category="club"><div class="card-art"><span class="badge gold">課外活動</span></div><div class="card-pad"><h3>ロボット部の技術相談</h3><div class="meta-list"><span>ハイブリッド</span><span>短期</span></div><p>センサー制御と発表資料の相談を受けます。</p><div class="tag-list"><span class="tag">ICT</span><span class="tag">ものづくり</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+          <article class="card opportunity-card" data-filter-item data-category="local"><div class="card-art leaf"><span class="badge gold">地域連携</span></div><div class="card-pad"><h3>地域行事ポスター制作</h3><div class="meta-list"><span>対面可</span><span>2週間</span></div><p>自治会の行事案内を生徒と一緒に制作します。</p><div class="tag-list"><span class="tag">デザイン</span><span class="tag">地域</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+          <article class="card opportunity-card" data-filter-item data-category="local"><div class="card-art gold"><span class="badge">地域連携</span></div><div class="card-pad"><h3>高齢者向けスマホ講座</h3><div class="meta-list"><span>対面</span><span>月1回</span></div><p>生徒と地域の方が交流する講座を支援します。</p><div class="tag-list"><span class="tag">ICT</span><span class="tag">講話</span></div><a class="btn btn-primary" href="applications.html">応募する</a></div></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
