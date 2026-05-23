@@ -1,0 +1,3076 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>まなびのわ | 全国の学校とボランティアをつなぐ</title>
+
+<!-- FAVICON: シンプルな同心円(輪)+中央ドット -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f3d2b'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23faf7f0' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%23c9a961'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f3d2b'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23faf7f0' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%23c9a961'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #1f3d2b;
+    --forest: #2d5a3d;
+    --leaf: #4a8b5f;
+    --sage: #7ba888;
+    --mist: #c8dcc9;
+    --cream: #f5f1e8;
+    --paper: #faf7f0;
+    --washi: #ede7d8;
+    --ink: #1a1f1c;
+    --gold: #c9a961;
+    --vermillion: #c14545;
+    --sky: #5b8da3;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: multiply;
+  }
+
+  .mincho {
+    font-family: 'Shippori Mincho', serif;
+  }
+
+  /* === ANNOUNCEMENT BAR === */
+  .announce-bar {
+    background: var(--moss);
+    color: var(--paper);
+    padding: 0.6rem 3rem;
+    font-size: 0.82rem;
+    text-align: center;
+    letter-spacing: 0.05em;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 51;
+  }
+
+  .announce-bar a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-left: 0.5rem;
+  }
+
+  /* === NAVIGATION === */
+  nav {
+    position: fixed;
+    top: 36px;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(250, 247, 240, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(31, 61, 43, 0.08);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--moss);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  /* SERVICE LOGO ICON */
+  .logo-mark {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.2rem;
+    align-items: center;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a:hover {
+    color: var(--leaf);
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--leaf);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .btn-primary {
+    background: var(--moss);
+    color: var(--paper);
+    padding: 0.7rem 1.5rem;
+    border-radius: 2rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .btn-primary:hover {
+    background: var(--leaf);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(31, 61, 43, 0.2);
+  }
+
+  /* === HERO === */
+  .hero {
+    min-height: 100vh;
+    padding: 11rem 3rem 4rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(123, 168, 136, 0.18), transparent),
+      radial-gradient(ellipse 50% 40% at 20% 70%, rgba(201, 169, 97, 0.1), transparent),
+      var(--paper);
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1.2rem;
+    background: var(--washi);
+    border: 1px solid rgba(31, 61, 43, 0.1);
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 2rem;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-tag::before {
+    content: '●';
+    color: var(--leaf);
+    font-size: 0.6rem;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2.5rem, 5.5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--moss);
+    margin-bottom: 2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 .accent {
+    position: relative;
+    display: inline-block;
+    color: var(--leaf);
+  }
+
+  .hero h1 .accent::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: -4px;
+    right: -4px;
+    height: 14px;
+    background: rgba(201, 169, 97, 0.35);
+    z-index: -1;
+    border-radius: 2px;
+  }
+
+  .hero h1 .vertical-mark {
+    display: inline-block;
+    font-size: 0.5em;
+    color: var(--gold);
+    margin: 0 0.3em;
+    transform: translateY(-0.3em);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: rgba(26, 31, 28, 0.7);
+    margin-bottom: 2.5rem;
+    max-width: 520px;
+    line-height: 1.9;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border-radius: 2rem;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-large.primary {
+    background: var(--moss);
+    color: var(--paper);
+  }
+
+  .btn-large.primary:hover {
+    background: var(--leaf);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(31, 61, 43, 0.25);
+  }
+
+  .btn-large.ghost {
+    background: transparent;
+    color: var(--moss);
+    border: 1.5px solid var(--moss);
+  }
+
+  .btn-large.ghost:hover {
+    background: var(--moss);
+    color: var(--paper);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(31, 61, 43, 0.1);
+    flex-wrap: wrap;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--moss);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: rgba(26, 31, 28, 0.6);
+    margin-top: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Hero illustration */
+  .hero-visual {
+    position: relative;
+    height: 560px;
+  }
+
+  .visual-frame {
+    position: absolute;
+    background: var(--cream);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(31, 61, 43, 0.15);
+    border: 1px solid rgba(31, 61, 43, 0.08);
+  }
+
+  .frame-1 {
+    top: 0;
+    right: 0;
+    width: 70%;
+    height: 60%;
+    background: linear-gradient(135deg, var(--forest), var(--leaf));
+    transform: rotate(2deg);
+    animation: float1 6s ease-in-out infinite;
+  }
+
+  .frame-1::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(45deg, transparent 0, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px);
+  }
+
+  .frame-1-content {
+    position: absolute;
+    inset: 0;
+    padding: 2rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .frame-1-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .frame-1-icons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .frame-2 {
+    bottom: 30px;
+    left: 0;
+    width: 65%;
+    height: 50%;
+    background: var(--paper);
+    transform: rotate(-3deg);
+    padding: 1.5rem;
+    animation: float2 7s ease-in-out infinite;
+  }
+
+  .frame-2-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed rgba(31, 61, 43, 0.2);
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #d4b876);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--moss);
+  }
+
+  .role {
+    font-size: 0.72rem;
+    color: rgba(26, 31, 28, 0.5);
+  }
+
+  .match-bar {
+    margin-top: 0.6rem;
+  }
+
+  .match-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: rgba(26, 31, 28, 0.6);
+    margin-bottom: 0.3rem;
+  }
+
+  .bar {
+    height: 6px;
+    background: var(--mist);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 92%;
+    background: linear-gradient(90deg, var(--leaf), var(--gold));
+    border-radius: 3px;
+    animation: fillBar 2s ease-out;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  .frame-2-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    padding: 0.25rem 0.7rem;
+    background: var(--washi);
+    border-radius: 0.8rem;
+    font-size: 0.7rem;
+    color: var(--forest);
+  }
+
+  .frame-3 {
+    top: 38%;
+    right: 8%;
+    width: 200px;
+    background: var(--paper);
+    padding: 1.2rem;
+    transform: rotate(5deg);
+    animation: float3 5s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .frame-3-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--vermillion);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .frame-3-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--moss);
+    margin-bottom: 0.3rem;
+  }
+
+  .frame-3-sub {
+    font-size: 0.72rem;
+    color: rgba(26, 31, 28, 0.6);
+  }
+
+  @keyframes float1 {
+    0%, 100% { transform: rotate(2deg) translateY(0); }
+    50% { transform: rotate(2deg) translateY(-10px); }
+  }
+
+  @keyframes float2 {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50% { transform: rotate(-3deg) translateY(-8px); }
+  }
+
+  @keyframes float3 {
+    0%, 100% { transform: rotate(5deg) translateY(0); }
+    50% { transform: rotate(5deg) translateY(-12px); }
+  }
+
+  .leaf-deco {
+    position: absolute;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .leaf-deco.tl { top: 80px; left: -40px; transform: rotate(-30deg); }
+
+  /* === SEARCH BAR === */
+  .search-section {
+    padding: 2rem 3rem 0;
+    margin-top: -2rem;
+    position: relative;
+    z-index: 5;
+  }
+
+  .search-box {
+    background: var(--paper);
+    border: 1px solid rgba(31, 61, 43, 0.12);
+    border-radius: 100px;
+    padding: 0.5rem;
+    box-shadow: 0 20px 60px rgba(31, 61, 43, 0.12);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 1px;
+    background: linear-gradient(to right, rgba(31, 61, 43, 0.1), rgba(31, 61, 43, 0.1));
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .search-field {
+    background: var(--paper);
+    padding: 1rem 1.5rem;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .search-field:hover {
+    background: var(--washi);
+  }
+
+  .search-field:first-child {
+    border-radius: 100px 0 0 100px;
+  }
+
+  .search-label {
+    font-size: 0.72rem;
+    color: var(--forest);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .search-input {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.92rem;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    color: rgba(26, 31, 28, 0.4);
+  }
+
+  .search-button {
+    background: var(--moss);
+    color: var(--paper);
+    border: none;
+    border-radius: 100px;
+    width: 56px;
+    height: 56px;
+    margin: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .search-button:hover {
+    background: var(--leaf);
+    transform: scale(1.05);
+  }
+
+  /* === SECTIONS === */
+  section {
+    padding: 7rem 3rem;
+    position: relative;
+  }
+
+  .section-label {
+    display: inline-block;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.85rem;
+    color: var(--leaf);
+    letter-spacing: 0.3em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .section-label::before {
+    content: '— ';
+    color: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--moss);
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+    max-width: 900px;
+  }
+
+  /* === HOW IT WORKS === */
+  .how-section {
+    background: var(--washi);
+    border-top: 1px solid rgba(31, 61, 43, 0.06);
+    border-bottom: 1px solid rgba(31, 61, 43, 0.06);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+    counter-reset: step;
+  }
+
+  .step {
+    position: relative;
+    padding: 2.5rem 2rem;
+    background: var(--paper);
+    border-radius: 16px;
+    border: 1px solid rgba(31, 61, 43, 0.08);
+    transition: all 0.4s;
+    overflow: hidden;
+  }
+
+  .step::before {
+    counter-increment: step;
+    content: "0" counter(step);
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--mist);
+    line-height: 1;
+    transition: color 0.4s;
+  }
+
+  .step:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 50px rgba(31, 61, 43, 0.12);
+    border-color: var(--leaf);
+  }
+
+  .step:hover::before {
+    color: var(--leaf);
+  }
+
+  .step-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--forest), var(--leaf));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--moss);
+    margin-bottom: 0.8rem;
+  }
+
+  .step-desc {
+    font-size: 0.92rem;
+    color: rgba(26, 31, 28, 0.7);
+    line-height: 1.8;
+  }
+
+  /* === OPPORTUNITIES === */
+  .opp-section {
+    background: var(--paper);
+  }
+
+  .opp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filters {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid rgba(31, 61, 43, 0.2);
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--moss);
+    color: var(--paper);
+    border-color: var(--moss);
+  }
+
+  .opportunities {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .opp-card {
+    background: var(--paper);
+    border: 1px solid rgba(31, 61, 43, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s;
+    position: relative;
+  }
+
+  .opp-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(31, 61, 43, 0.1);
+    border-color: var(--leaf);
+  }
+
+  .opp-image {
+    height: 180px;
+    background: var(--mist);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opp-1 .opp-image { background: linear-gradient(135deg, #2d5a3d, #4a8b5f); }
+  .opp-2 .opp-image { background: linear-gradient(135deg, #4a8b5f, #7ba888); }
+  .opp-3 .opp-image { background: linear-gradient(135deg, #1f3d2b, #2d5a3d); }
+  .opp-4 .opp-image { background: linear-gradient(135deg, #7ba888, #c8dcc9); }
+  .opp-5 .opp-image { background: linear-gradient(135deg, #c9a961, #4a8b5f); }
+  .opp-6 .opp-image { background: linear-gradient(135deg, #2d5a3d, #c9a961); }
+
+  .opp-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(0deg, transparent 0, transparent 30px, rgba(255,255,255,0.04) 30px, rgba(255,255,255,0.04) 60px),
+      repeating-linear-gradient(90deg, transparent 0, transparent 30px, rgba(255,255,255,0.04) 30px, rgba(255,255,255,0.04) 60px);
+  }
+
+  .opp-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.3rem 0.8rem;
+    background: rgba(250, 247, 240, 0.95);
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--forest);
+    backdrop-filter: blur(10px);
+  }
+
+  .opp-online {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.3rem 0.8rem;
+    background: var(--vermillion);
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .opp-online::before {
+    content: '●';
+    font-size: 0.6rem;
+    animation: pulse 1.5s infinite;
+  }
+
+  .opp-symbol {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: 'Shippori Mincho', serif;
+    line-height: 1;
+  }
+
+  .opp-content {
+    padding: 1.5rem;
+  }
+
+  .opp-school {
+    font-size: 0.78rem;
+    color: var(--leaf);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .opp-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--moss);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .opp-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    color: rgba(26, 31, 28, 0.6);
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px dashed rgba(31, 61, 43, 0.15);
+  }
+
+  .opp-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .opp-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .opp-tags {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .opp-apply {
+    padding: 0.5rem 1rem;
+    background: var(--moss);
+    color: var(--paper);
+    border: none;
+    border-radius: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .opp-apply:hover {
+    background: var(--leaf);
+    transform: scale(1.05);
+  }
+
+  /* === SAFETY SECTION === */
+  .safety-section {
+    background: var(--cream);
+    position: relative;
+  }
+
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .safety-card {
+    background: var(--paper);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(31, 61, 43, 0.08);
+    transition: all 0.4s;
+    position: relative;
+  }
+
+  .safety-card:hover {
+    border-color: var(--leaf);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(31, 61, 43, 0.08);
+  }
+
+  .safety-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--leaf), var(--sage));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+    color: white;
+  }
+
+  .safety-card h4 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.1rem;
+    color: var(--moss);
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .safety-card p {
+    font-size: 0.85rem;
+    color: rgba(26, 31, 28, 0.65);
+    line-height: 1.7;
+  }
+
+  .safety-cert {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--paper);
+    border-radius: 16px;
+    border: 2px dashed rgba(31, 61, 43, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .cert-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--moss);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .cert-text {
+    flex: 1;
+    min-width: 280px;
+  }
+
+  .cert-text h4 {
+    font-family: 'Shippori Mincho', serif;
+    color: var(--moss);
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .cert-text p {
+    font-size: 0.88rem;
+    color: rgba(26, 31, 28, 0.7);
+  }
+
+  /* === FOR WHO === */
+  .forwho-section {
+    background: var(--moss);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .forwho-section .section-label {
+    color: var(--gold);
+  }
+
+  .forwho-section .section-title {
+    color: var(--paper);
+  }
+
+  .forwho-section::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.15), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .forwho-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .forwho-card {
+    background: rgba(250, 247, 240, 0.05);
+    border: 1px solid rgba(250, 247, 240, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s;
+  }
+
+  .forwho-card:hover {
+    background: rgba(250, 247, 240, 0.08);
+    border-color: var(--gold);
+    transform: translateY(-4px);
+  }
+
+  .forwho-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--gold);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    color: var(--moss);
+  }
+
+  .forwho-card h3 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: var(--paper);
+  }
+
+  .forwho-card p {
+    color: rgba(250, 247, 240, 0.7);
+    margin-bottom: 1.5rem;
+    line-height: 1.9;
+  }
+
+  .forwho-list {
+    list-style: none;
+  }
+
+  .forwho-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: rgba(250, 247, 240, 0.85);
+    font-size: 0.92rem;
+  }
+
+  .forwho-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* === PRICING === */
+  .pricing-section {
+    background: var(--paper);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .price-card {
+    background: var(--paper);
+    border: 1px solid rgba(31, 61, 43, 0.12);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative;
+    transition: all 0.4s;
+  }
+
+  .price-card.featured {
+    background: var(--moss);
+    color: var(--paper);
+    transform: scale(1.03);
+    border: none;
+    box-shadow: 0 24px 60px rgba(31, 61, 43, 0.25);
+  }
+
+  .price-card:hover:not(.featured) {
+    border-color: var(--leaf);
+    transform: translateY(-4px);
+  }
+
+  .price-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--moss);
+    padding: 0.4rem 1.2rem;
+    border-radius: 1rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .price-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--moss);
+    margin-bottom: 0.5rem;
+  }
+
+  .price-card.featured .price-name {
+    color: var(--paper);
+  }
+
+  .price-target {
+    font-size: 0.85rem;
+    color: rgba(26, 31, 28, 0.6);
+    margin-bottom: 1.5rem;
+  }
+
+  .price-card.featured .price-target {
+    color: rgba(250, 247, 240, 0.7);
+  }
+
+  .price-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .price-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--moss);
+    line-height: 1;
+  }
+
+  .price-card.featured .price-num {
+    color: var(--gold);
+  }
+
+  .price-unit {
+    font-size: 0.9rem;
+    color: rgba(26, 31, 28, 0.6);
+  }
+
+  .price-card.featured .price-unit {
+    color: rgba(250, 247, 240, 0.7);
+  }
+
+  .price-note {
+    font-size: 0.78rem;
+    color: rgba(26, 31, 28, 0.5);
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed rgba(31, 61, 43, 0.15);
+  }
+
+  .price-card.featured .price-note {
+    color: rgba(250, 247, 240, 0.5);
+    border-bottom-color: rgba(250, 247, 240, 0.15);
+  }
+
+  .price-features {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+
+  .price-features li {
+    padding: 0.4rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    font-size: 0.88rem;
+    color: rgba(26, 31, 28, 0.75);
+  }
+
+  .price-card.featured .price-features li {
+    color: rgba(250, 247, 240, 0.85);
+  }
+
+  .price-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--leaf);
+    font-weight: 700;
+  }
+
+  .price-card.featured .price-features li::before {
+    color: var(--gold);
+  }
+
+  .price-cta {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--moss);
+    color: var(--paper);
+    border: none;
+    border-radius: 2rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .price-card.featured .price-cta {
+    background: var(--gold);
+    color: var(--moss);
+  }
+
+  .price-cta:hover {
+    background: var(--leaf);
+    transform: translateY(-2px);
+  }
+
+  .price-card.featured .price-cta:hover {
+    background: var(--paper);
+  }
+
+  /* === VOICES === */
+  .voices-section {
+    background: var(--cream);
+  }
+
+  .voices-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .voice-card {
+    background: var(--paper);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(31, 61, 43, 0.08);
+    position: relative;
+  }
+
+  .voice-card::before {
+    content: '"';
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 5rem;
+    color: var(--mist);
+    line-height: 1;
+  }
+
+  .voice-text {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .voice-author {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(31, 61, 43, 0.15);
+  }
+
+  .voice-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .v1 .voice-avatar { background: linear-gradient(135deg, var(--forest), var(--leaf)); }
+  .v2 .voice-avatar { background: linear-gradient(135deg, var(--gold), #d4b876); }
+  .v3 .voice-avatar { background: linear-gradient(135deg, var(--vermillion), #d77575); }
+
+  .voice-name {
+    font-weight: 600;
+    color: var(--moss);
+  }
+
+  .voice-role {
+    font-size: 0.78rem;
+    color: rgba(26, 31, 28, 0.6);
+  }
+
+  /* === NEWS === */
+  .news-section {
+    background: var(--paper);
+  }
+
+  .news-list {
+    margin-top: 3rem;
+    background: var(--paper);
+    border: 1px solid rgba(31, 61, 43, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .news-item {
+    display: grid;
+    grid-template-columns: 110px 90px 1fr auto;
+    gap: 1.5rem;
+    padding: 1.4rem 2rem;
+    align-items: center;
+    border-bottom: 1px solid rgba(31, 61, 43, 0.06);
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+
+  .news-item:last-child {
+    border-bottom: none;
+  }
+
+  .news-item:hover {
+    background: var(--washi);
+  }
+
+  .news-date {
+    font-family: 'DM Serif Display', serif;
+    color: var(--leaf);
+    font-size: 0.9rem;
+  }
+
+  .news-cat {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .news-cat.notice { background: var(--moss); color: var(--paper); }
+  .news-cat.update { background: var(--gold); color: var(--moss); }
+  .news-cat.event { background: var(--vermillion); color: var(--paper); }
+  .news-cat.media { background: var(--sky); color: var(--paper); }
+
+  .news-title {
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .news-arrow {
+    color: var(--leaf);
+    transition: transform 0.3s;
+  }
+
+  .news-item:hover .news-arrow {
+    transform: translateX(4px);
+  }
+
+  /* === FAQ === */
+  .faq-section {
+    background: var(--washi);
+    border-top: 1px solid rgba(31, 61, 43, 0.06);
+    border-bottom: 1px solid rgba(31, 61, 43, 0.06);
+  }
+
+  .faq-list {
+    margin-top: 3rem;
+    max-width: 900px;
+  }
+
+  .faq-item {
+    background: var(--paper);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(31, 61, 43, 0.08);
+    transition: all 0.3s;
+  }
+
+  .faq-item[open] {
+    border-color: var(--leaf);
+    box-shadow: 0 8px 24px rgba(31, 61, 43, 0.06);
+  }
+
+  .faq-question {
+    padding: 1.3rem 1.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+    color: var(--moss);
+    font-size: 1rem;
+    list-style: none;
+    transition: background 0.3s;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question:hover {
+    background: var(--washi);
+  }
+
+  .faq-q-mark {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .faq-q-text {
+    flex: 1;
+  }
+
+  .faq-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--washi);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-toggle {
+    background: var(--moss);
+    color: var(--paper);
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.8rem 1.5rem 4rem;
+    color: rgba(26, 31, 28, 0.75);
+    font-size: 0.92rem;
+    line-height: 1.9;
+  }
+
+  /* === PARTNERS === */
+  .partners-section {
+    background: var(--paper);
+    padding: 5rem 3rem;
+    text-align: center;
+  }
+
+  .partners-label {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.85rem;
+    color: rgba(26, 31, 28, 0.5);
+    letter-spacing: 0.3em;
+    margin-bottom: 2.5rem;
+    text-transform: uppercase;
+  }
+
+  .partners-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2rem;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .partner-logo {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(26, 31, 28, 0.4);
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid rgba(31, 61, 43, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s;
+    text-align: center;
+    padding: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .partner-logo:hover {
+    color: var(--moss);
+    border-color: var(--leaf);
+    transform: translateY(-2px);
+  }
+
+  /* === CTA === */
+  .cta-section {
+    padding: 8rem 3rem;
+    text-align: center;
+    background: 
+      radial-gradient(ellipse at center, rgba(123, 168, 136, 0.2), transparent 70%),
+      var(--paper);
+  }
+
+  .cta-section h2 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--moss);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .cta-section p {
+    font-size: 1.1rem;
+    color: rgba(26, 31, 28, 0.7);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* === FOOTER === */
+  footer {
+    background: var(--moss);
+    color: rgba(250, 247, 240, 0.7);
+    padding: 4rem 3rem 2rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .footer-brand .logo {
+    color: var(--paper);
+    margin-bottom: 1rem;
+  }
+
+  .footer-brand p {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    max-width: 320px;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 0.7rem;
+  }
+
+  .social-icon {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(250, 247, 240, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(250, 247, 240, 0.7);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .social-icon:hover {
+    background: var(--gold);
+    color: var(--moss);
+    border-color: var(--gold);
+  }
+
+  .footer h4 {
+    font-family: 'Shippori Mincho', serif;
+    color: var(--paper);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .footer ul {
+    list-style: none;
+  }
+
+  .footer ul li {
+    padding: 0.3rem 0;
+  }
+
+  .footer ul a {
+    color: rgba(250, 247, 240, 0.6);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: color 0.3s;
+  }
+
+  .footer ul a:hover {
+    color: var(--gold);
+  }
+
+  .footer-bottom {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(250, 247, 240, 0.1);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-legal {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-legal a {
+    color: rgba(250, 247, 240, 0.5);
+    text-decoration: none;
+  }
+
+  .footer-legal a:hover {
+    color: var(--gold);
+  }
+
+  /* === REGION (地域連携) === */
+  .region-section {
+    background: var(--paper);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .region-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(123, 168, 136, 0.1), transparent 70%);
+    pointer-events: none;
+  }
+
+  .region-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 4rem;
+    align-items: center;
+  }
+
+  .region-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .region-feature {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+    background: var(--cream);
+    border-radius: 14px;
+    border: 1px solid rgba(31, 61, 43, 0.06);
+    transition: all 0.3s;
+  }
+
+  .region-feature:hover {
+    background: var(--washi);
+    transform: translateX(4px);
+    border-color: var(--leaf);
+  }
+
+  .region-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--moss);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .region-feature-text h4 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.05rem;
+    color: var(--moss);
+    margin-bottom: 0.3rem;
+  }
+
+  .region-feature-text p {
+    font-size: 0.88rem;
+    color: rgba(26, 31, 28, 0.7);
+    line-height: 1.7;
+  }
+
+  /* PWA mockup */
+  .pwa-mockup {
+    position: relative;
+    height: 580px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .phone-frame {
+    width: 280px;
+    height: 560px;
+    background: #1a1f1c;
+    border-radius: 38px;
+    padding: 12px;
+    box-shadow: 0 30px 80px rgba(31, 61, 43, 0.25), 0 0 0 1px rgba(31, 61, 43, 0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 22px;
+    background: #1a1f1c;
+    border-radius: 12px;
+    z-index: 3;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--paper);
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-status {
+    height: 36px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 0 1.2rem 0.4rem;
+    font-size: 0.65rem;
+    color: var(--moss);
+    font-weight: 600;
+    gap: 0.3rem;
+  }
+
+  .phone-header {
+    padding: 1rem 1.2rem 0.8rem;
+    background: var(--moss);
+    color: var(--paper);
+  }
+
+  .phone-app-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .phone-app-name svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .phone-app-name span {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .phone-greeting {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-bottom: 0.2rem;
+  }
+
+  .phone-region {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .phone-region::after {
+    content: ' ▾';
+    font-size: 0.7rem;
+    color: var(--gold);
+  }
+
+  .phone-content {
+    flex: 1;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .phone-section-label {
+    font-size: 0.62rem;
+    color: var(--leaf);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .phone-card {
+    background: var(--paper);
+    border: 1px solid rgba(31, 61, 43, 0.1);
+    border-radius: 12px;
+    padding: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .phone-card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--moss);
+    margin-bottom: 0.3rem;
+  }
+
+  .phone-card-meta {
+    font-size: 0.62rem;
+    color: rgba(26, 31, 28, 0.55);
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .phone-card-tag {
+    display: inline-block;
+    background: var(--mist);
+    color: var(--forest);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.5rem;
+    font-size: 0.58rem;
+    font-weight: 600;
+    margin-top: 0.3rem;
+  }
+
+  .phone-quick {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 0.8rem 0;
+  }
+
+  .phone-quick-btn {
+    background: var(--washi);
+    border-radius: 10px;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    font-size: 0.62rem;
+    color: var(--moss);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .phone-quick-btn-icon {
+    display: block;
+    margin: 0 auto 0.2rem;
+    color: var(--leaf);
+  }
+
+  .phone-tabbar {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.6rem 0 0.8rem;
+    border-top: 1px solid rgba(31, 61, 43, 0.08);
+    background: var(--paper);
+  }
+
+  .phone-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    color: rgba(26, 31, 28, 0.4);
+    font-size: 0.55rem;
+    font-weight: 600;
+  }
+
+  .phone-tab.active {
+    color: var(--moss);
+  }
+
+  /* Floating decoration around phone */
+  .phone-deco {
+    position: absolute;
+    background: var(--cream);
+    border: 1px solid rgba(31, 61, 43, 0.08);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 12px 30px rgba(31, 61, 43, 0.12);
+    font-size: 0.78rem;
+    color: var(--moss);
+    z-index: 3;
+  }
+
+  .phone-deco.d1 {
+    top: 60px;
+    left: 0;
+    transform: rotate(-4deg);
+    animation: float2 6s ease-in-out infinite;
+  }
+
+  .phone-deco.d2 {
+    bottom: 80px;
+    right: 0;
+    transform: rotate(3deg);
+    animation: float3 7s ease-in-out infinite;
+  }
+
+  .phone-deco strong {
+    color: var(--leaf);
+  }
+
+  .pwa-badges {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .pwa-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--moss);
+    color: var(--paper);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .pwa-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 968px) {
+    .announce-bar { padding: 0.5rem 1rem; font-size: 0.72rem; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section, .hero, .cta-section, .partners-section, .search-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .hero { 
+      grid-template-columns: 1fr; 
+      padding-top: 8rem;
+      gap: 3rem;
+    }
+    .hero-visual { height: 400px; }
+    .steps { grid-template-columns: 1fr; }
+    .forwho-grid { grid-template-columns: 1fr; }
+    .voices-grid { grid-template-columns: 1fr; }
+    .safety-grid { grid-template-columns: 1fr 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .price-card.featured { transform: scale(1); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .forwho-card { padding: 2rem; }
+    .partners-grid { grid-template-columns: repeat(2, 1fr); }
+    .search-box { grid-template-columns: 1fr; border-radius: 20px; }
+    .search-field:first-child { border-radius: 20px 20px 0 0; }
+    .news-item { grid-template-columns: 1fr; gap: 0.4rem; padding: 1rem 1.5rem; }
+    .news-arrow { display: none; }
+    .region-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .pwa-mockup { height: 600px; }
+    .phone-deco.d1 { left: -10px; }
+    .phone-deco.d2 { right: -10px; }
+  }
+
+  @media (max-width: 540px) {
+    .safety-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Entry animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1s ease-out forwards;
+  }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.25s; }
+  .delay-3 { animation-delay: 0.4s; }
+  .delay-4 { animation-delay: 0.55s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar">
+  🌱 春の新規募集キャンペーン実施中 — 全国120校が新しい仲間を募集しています <a href="#opportunities">詳しく見る →</a>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="logo">
+    <!-- SERVICE LOGO ICON: シンプルな輪 -->
+    <svg class="logo-mark" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="14" fill="#1f3d2b"/>
+      <circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/>
+      <circle cx="32" cy="32" r="5.5" fill="#c9a961"/>
+    </svg>
+    <span>まなびのわ</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">仕組み</a></li>
+    <li><a href="#opportunities">募集一覧</a></li>
+    <li><a href="#region">地域連携</a></li>
+    <li><a href="#pricing">料金</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#" style="color: var(--moss); font-weight: 600;">ログイン</a></li>
+    <li><button class="btn-primary">無料登録</button></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <svg class="leaf-deco tl" width="180" height="180" viewBox="0 0 180 180" fill="none">
+    <path d="M90 10 Q140 60, 90 170 Q40 60, 90 10 Z" fill="#4a8b5f"/>
+    <path d="M90 10 L90 170" stroke="#1f3d2b" stroke-width="1"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-tag fade-up delay-1">全国47都道府県の学校とつながる</div>
+    <h1 class="fade-up delay-2">
+      あなたの<span class="accent">経験</span>が、<br>
+      <span class="vertical-mark">●</span>子どもたちの<br>
+      <span class="accent">未来</span>になる。
+    </h1>
+    <p class="hero-sub fade-up delay-3">
+      まなびのわは、専門知識や経験を持つ社会人と、人材を必要とする全国の学校・教育委員会をオンラインで結ぶマッチングプラットフォームです。地理的な制約を越えて、教育現場に新しい風を。
+    </p>
+    <div class="hero-cta fade-up delay-3">
+      <button class="btn-large primary">
+        ボランティアとして登録
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+      <button class="btn-large ghost">学校・教育委員会の方</button>
+    </div>
+    <div class="hero-stats fade-up delay-4">
+      <div>
+        <div class="stat-num">2,847</div>
+        <div class="stat-label">登録ボランティア</div>
+      </div>
+      <div>
+        <div class="stat-num">512</div>
+        <div class="stat-label">参加校・教委</div>
+      </div>
+      <div>
+        <div class="stat-num">98<span style="font-size: 1.2rem;">%</span></div>
+        <div class="stat-label">満足度</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="visual-frame frame-1">
+      <div class="frame-1-content">
+        <div>
+          <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.5rem; letter-spacing: 0.1em;">FEATURED — オンライン授業</div>
+          <div class="frame-1-title">プログラミングで<br>未来を描こう</div>
+        </div>
+        <div>
+          <div style="font-size: 0.8rem; opacity: 0.85; margin-bottom: 0.8rem;">青森県 八戸市立小学校 / 全6回</div>
+          <div class="frame-1-icons">
+            <span class="pill">オンライン</span>
+            <span class="pill">小学高学年</span>
+            <span class="pill">IT・技術</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="visual-frame frame-2">
+      <div class="frame-2-header">
+        <div class="avatar">山</div>
+        <div>
+          <div class="name">山本 美咲 さん</div>
+          <div class="role">エンジニア / 7年目</div>
+        </div>
+      </div>
+      <div class="match-bar">
+        <div class="match-label">
+          <span>マッチング適性</span>
+          <span style="color: var(--leaf); font-weight: 600;">92%</span>
+        </div>
+        <div class="bar"><div class="bar-fill"></div></div>
+      </div>
+      <div class="frame-2-tags">
+        <span class="tag">Python</span>
+        <span class="tag">教育経験あり</span>
+        <span class="tag">平日夜OK</span>
+      </div>
+    </div>
+
+    <div class="visual-frame frame-3">
+      <div class="frame-3-icon">✓</div>
+      <div class="frame-3-title">マッチング成立</div>
+      <div class="frame-3-sub">福岡県の中学校から<br>依頼が届きました</div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH BAR -->
+<div class="search-section">
+  <div class="search-box">
+    <div class="search-field">
+      <span class="search-label">分野</span>
+      <input type="text" class="search-input" placeholder="例: プログラミング、英語">
+    </div>
+    <div class="search-field">
+      <span class="search-label">地域</span>
+      <input type="text" class="search-input" placeholder="全国 / 都道府県を選択">
+    </div>
+    <div class="search-field">
+      <span class="search-label">対象学年</span>
+      <input type="text" class="search-input" placeholder="小学校・中学校・高校">
+    </div>
+    <button class="search-button" aria-label="検索">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21l-4.35-4.35"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="section-label">HOW IT WORKS</div>
+  <h2 class="section-title">3つのステップで、<br>教育現場とつながる。</h2>
+  <p style="max-width: 600px; color: rgba(26, 31, 28, 0.7); font-size: 1.05rem;">
+    ボランティア登録から実際の授業参加まで、すべてオンラインで完結。あなたのペースで、無理なく社会貢献を始められます。
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 11h-6M19 8v6"/>
+        </svg>
+      </div>
+      <h3 class="step-title">プロフィール登録</h3>
+      <p class="step-desc">
+        専門分野、対応可能な時間帯、提供できる授業内容を登録。詳しく書くほどマッチング精度が上がります。
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+      <h3 class="step-title">マッチング</h3>
+      <p class="step-desc">
+        学校側の募集にAIがあなたを推薦、または自分から応募も可能。条件を確認して、ぴったりの機会を見つけます。
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <h3 class="step-title">オンライン授業</h3>
+      <p class="step-desc">
+        Google Classroom や Google Meet と連携し、学校の既存環境からそのまま授業へ。資料共有・録画・出欠まで一元管理できます。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- OPPORTUNITIES -->
+<section class="opp-section" id="opportunities">
+  <div class="opp-header">
+    <div>
+      <div class="section-label">OPPORTUNITIES</div>
+      <h2 class="section-title" style="margin-bottom: 0;">いま、求められている。</h2>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active">すべて</button>
+      <button class="filter-btn">IT・科学</button>
+      <button class="filter-btn">語学</button>
+      <button class="filter-btn">芸術</button>
+      <button class="filter-btn">キャリア</button>
+      <button class="filter-btn">国際交流</button>
+    </div>
+  </div>
+
+  <div class="opportunities">
+    <div class="opp-card opp-1">
+      <div class="opp-image">
+        <span class="opp-badge">青森県</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">技</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">八戸市立白山台中学校</div>
+        <div class="opp-title">プログラミング体験授業の講師募集</div>
+        <div class="opp-meta">
+          <span>📅 6回シリーズ</span>
+          <span>👥 中2・3年生</span>
+          <span>🕐 平日午後</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">Python</span>
+            <span class="tag">基礎</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opp-card opp-2">
+      <div class="opp-image">
+        <span class="opp-badge">沖縄県</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">英</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">石垣市教育委員会</div>
+        <div class="opp-title">海外在住者による英会話サポート</div>
+        <div class="opp-meta">
+          <span>📅 月2回</span>
+          <span>👥 小5〜中3</span>
+          <span>🕐 朝/夕方</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">英語</span>
+            <span class="tag">海外OK</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opp-card opp-3">
+      <div class="opp-image">
+        <span class="opp-badge">北海道</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">志</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">札幌市立北野高校</div>
+        <div class="opp-title">キャリア教育・OB/OG講演</div>
+        <div class="opp-meta">
+          <span>📅 単発</span>
+          <span>👥 高校生</span>
+          <span>🕐 6限後</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">キャリア</span>
+            <span class="tag">講演</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opp-card opp-4">
+      <div class="opp-image">
+        <span class="opp-badge">島根県</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">芸</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">隠岐諸島連合小学校</div>
+        <div class="opp-title">島の子どもたちと音楽でつながる</div>
+        <div class="opp-meta">
+          <span>📅 週1回</span>
+          <span>👥 全学年</span>
+          <span>🕐 放課後</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">音楽</span>
+            <span class="tag">楽器</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opp-card opp-5">
+      <div class="opp-image">
+        <span class="opp-badge">熊本県</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">学</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">熊本市立天明中学校</div>
+        <div class="opp-title">SDGsを考えるワークショップ</div>
+        <div class="opp-meta">
+          <span>📅 3回シリーズ</span>
+          <span>👥 中学生</span>
+          <span>🕐 総合の時間</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">SDGs</span>
+            <span class="tag">環境</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opp-card opp-6">
+      <div class="opp-image">
+        <span class="opp-badge">岩手県</span>
+        <span class="opp-online">オンライン</span>
+        <div class="opp-symbol">創</div>
+      </div>
+      <div class="opp-content">
+        <div class="opp-school">遠野市教育委員会</div>
+        <div class="opp-title">起業家精神を育てる特別授業</div>
+        <div class="opp-meta">
+          <span>📅 月1回</span>
+          <span>👥 高校生</span>
+          <span>🕐 平日昼</span>
+        </div>
+        <div class="opp-footer">
+          <div class="opp-tags">
+            <span class="tag">起業</span>
+            <span class="tag">経営</span>
+          </div>
+          <button class="opp-apply">詳細を見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 3rem;">
+    <button class="btn-large ghost">すべての募集を見る (148件)</button>
+  </div>
+</section>
+
+<!-- SAFETY === -->
+<section class="safety-section" id="safety">
+  <div class="section-label">SAFETY & TRUST</div>
+  <h2 class="section-title">子どもたちの学びを守る、<br>3層の安心。</h2>
+  <p style="max-width: 700px; color: rgba(26, 31, 28, 0.7); font-size: 1.05rem;">
+    教育現場での活動だからこそ、安全性を最優先に。すべての登録者・授業に対して、独自の審査と監督体制を敷いています。
+  </p>
+
+  <div class="safety-grid">
+    <div class="safety-card">
+      <div class="safety-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <h4>本人確認・身元審査</h4>
+      <p>運転免許証等による本人確認に加え、犯罪歴照会(無犯罪証明書)の提出を必須とし、安全な人材のみが登録できます。</p>
+    </div>
+
+    <div class="safety-card">
+      <div class="safety-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 4.5C3 3.67 3.67 3 4.5 3h15c.83 0 1.5.67 1.5 1.5v15c0 .83-.67 1.5-1.5 1.5h-15c-.83 0-1.5-.67-1.5-1.5v-15z"/>
+          <path d="M8 12l3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h4>Google Classroom 連携</h4>
+      <p>GIGA端末で標準利用されるGoogle Classroomと高度に連携。授業資料の配布・課題提出・出欠管理まで、既存環境のまま完結します。</p>
+    </div>
+
+    <div class="safety-card">
+      <div class="safety-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <h4>教員の常時立ち会い</h4>
+      <p>すべての授業に学校側の教員が立ち会います。ボランティアと生徒が直接やり取りすることはありません。</p>
+    </div>
+
+    <div class="safety-card">
+      <div class="safety-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+      </div>
+      <h4>24時間サポート体制</h4>
+      <p>授業中のトラブルや疑問は専用ホットラインで即時対応。教育専門のスタッフが寄り添います。</p>
+    </div>
+  </div>
+
+  <div class="safety-cert">
+    <div class="cert-icon">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 15l-3.5-3.5L10 10l2 2 5-5 1.5 1.5L12 15z" fill="currentColor"/>
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+    </div>
+    <div class="cert-text">
+      <h4>文部科学省「教育CSR推進プログラム」認定</h4>
+      <p>個人情報保護(プライバシーマーク)・ISMS認証取得。全国の教育委員会との連携実績があります。</p>
+    </div>
+    <button class="btn-primary">詳しい安全対策を見る</button>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+<section class="forwho-section" id="forwho">
+  <div class="section-label">FOR WHO</div>
+  <h2 class="section-title">それぞれの想いが、<br>ひとつの授業になる。</h2>
+
+  <div class="forwho-grid">
+    <div class="forwho-card">
+      <div class="forwho-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      </div>
+      <h3>ボランティアの方へ</h3>
+      <p>
+        専門知識や人生経験を、未来を担う子どもたちのために。在宅で、隙間時間で、無理なく社会貢献できます。
+      </p>
+      <ul class="forwho-list">
+        <li>登録・利用は完全無料</li>
+        <li>謝礼が出る案件も多数掲載</li>
+        <li>授業準備のサポート資料完備</li>
+        <li>初心者向け研修プログラムあり</li>
+        <li>活動証明書の発行可能</li>
+      </ul>
+    </div>
+
+    <div class="forwho-card">
+      <div class="forwho-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+        </svg>
+      </div>
+      <h3>学校・教育委員会の方へ</h3>
+      <p>
+        地域の枠を超えて、最適な人材とつながる。多様な専門家を迎えることで、子どもたちの視野を広げる授業を実現します。
+      </p>
+      <ul class="forwho-list">
+        <li>全国2,847名の登録者から検索</li>
+        <li>AI推薦で適切な人材を提案</li>
+        <li>教育委員会向け一括導入プラン</li>
+        <li>Google Classroom と完全連携</li>
+        <li>事務手続きをすべてサポート</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- REGION (地域連携) -->
+<section class="region-section" id="region">
+  <div class="section-label">REGIONAL CONNECT</div>
+  <h2 class="section-title">地域の学校と、もっと近く。</h2>
+  <p style="max-width: 700px; color: rgba(26, 31, 28, 0.7); font-size: 1.05rem;">
+    PWA対応のアプリで、お住まいの地域の学校・教育委員会へ直接アクセス。「うちの地元の小学校で何かしたい」を、最短ルートで実現します。
+  </p>
+
+  <div class="region-grid">
+    <div class="region-features">
+      <div class="region-feature">
+        <div class="region-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="region-feature-text">
+          <h4>地元の学校に、直接コンタクト</h4>
+          <p>位置情報や登録した地域から、近隣の学校・教育委員会の窓口を一覧表示。「自分の母校で授業がしたい」が即実現できます。</p>
+        </div>
+      </div>
+
+      <div class="region-feature">
+        <div class="region-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0122 16.92z"/>
+          </svg>
+        </div>
+        <div class="region-feature-text">
+          <h4>ワンタップで連絡窓口を開く</h4>
+          <p>各学校・教育委員会の専用問い合わせフォームへ即遷移。電話番号やメール、対応可能曜日も明示されています。</p>
+        </div>
+      </div>
+
+      <div class="region-feature">
+        <div class="region-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>
+          </svg>
+        </div>
+        <div class="region-feature-text">
+          <h4>地域コミュニティ機能</h4>
+          <p>同じ地域で活動するボランティア同士が交流できる掲示板。地域イベントや、合同で進めるプロジェクトの相談も。</p>
+        </div>
+      </div>
+
+      <div class="region-feature">
+        <div class="region-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 17h5l-1.4-1.4A7 7 0 0017 11V8a5 5 0 00-10 0v3a7 7 0 00-1.6 4.6L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+        </div>
+        <div class="region-feature-text">
+          <h4>近隣の募集をプッシュ通知</h4>
+          <p>登録エリアの新規募集や緊急依頼をリアルタイム通知。「来週、地元の中学校で講師急募」にもすぐ気づけます。</p>
+        </div>
+      </div>
+
+      <div class="pwa-badges">
+        <span class="pwa-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          PWA対応 — ホーム画面に追加可
+        </span>
+        <span class="pwa-badge" style="background: var(--gold); color: var(--moss);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 13l4 4L19 7"/>
+          </svg>
+          オフラインでも閲覧OK
+        </span>
+      </div>
+    </div>
+
+    <div class="pwa-mockup">
+      <!-- Floating notification card -->
+      <div class="phone-deco d1">
+        🔔 <strong>新着</strong> 母校から<br>講師依頼が届きました
+      </div>
+
+      <!-- Phone -->
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span>●●●</span>
+            <span>📶</span>
+            <span>🔋</span>
+          </div>
+          <div class="phone-header">
+            <div class="phone-app-name">
+              <svg viewBox="0 0 64 64" fill="none">
+                <rect width="64" height="64" rx="14" fill="#faf7f0" fill-opacity="0.15"/>
+                <circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/>
+                <circle cx="32" cy="32" r="5.5" fill="#c9a961"/>
+              </svg>
+              <span>まなびのわ</span>
+            </div>
+            <div class="phone-greeting">こんにちは、田中さん</div>
+            <div class="phone-region">📍 愛知県 碧南市</div>
+          </div>
+
+          <div class="phone-content">
+            <div class="phone-section-label">あなたの地域で</div>
+
+            <div class="phone-card">
+              <div class="phone-card-title">碧南市立中央中学校</div>
+              <div class="phone-card-meta">
+                <span>🚶 1.2km</span>
+                <span>📅 募集中</span>
+              </div>
+              <span class="phone-card-tag">プログラミング</span>
+            </div>
+
+            <div class="phone-card">
+              <div class="phone-card-title">碧南市教育委員会</div>
+              <div class="phone-card-meta">
+                <span>🚶 2.8km</span>
+                <span>💬 連絡可</span>
+              </div>
+              <span class="phone-card-tag">キャリア教育</span>
+            </div>
+
+            <div class="phone-quick">
+              <div class="phone-quick-btn">
+                <svg class="phone-quick-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/>
+                </svg>
+                連絡窓口
+              </div>
+              <div class="phone-quick-btn">
+                <svg class="phone-quick-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                地域マップ
+              </div>
+            </div>
+          </div>
+
+          <div class="phone-tabbar">
+            <div class="phone-tab active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12l9-9 9 9M5 10v10h14V10"/>
+              </svg>
+              ホーム
+            </div>
+            <div class="phone-tab">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+              さがす
+            </div>
+            <div class="phone-tab">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+              連絡
+            </div>
+            <div class="phone-tab">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              マイ
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating contact card -->
+      <div class="phone-deco d2">
+        📞 <strong>窓口直通</strong><br>1タップで連絡
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-label">PRICING</div>
+  <h2 class="section-title">シンプルな料金体系。</h2>
+  <p style="max-width: 600px; color: rgba(26, 31, 28, 0.7); font-size: 1.05rem;">
+    ボランティアの方は永久無料。学校・教育委員会の方には、規模に応じた3つのプランをご用意しています。
+  </p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">ボランティア</div>
+      <div class="price-target">個人の方向け</div>
+      <div class="price-amount">
+        <span class="price-num">¥0</span>
+        <span class="price-unit">/ 永久無料</span>
+      </div>
+      <div class="price-note">登録から利用まですべて無料</div>
+      <ul class="price-features">
+        <li>無制限の募集応募</li>
+        <li>プロフィール作成・公開</li>
+        <li>研修プログラム受講</li>
+        <li>活動証明書発行</li>
+        <li>コミュニティへの参加</li>
+      </ul>
+      <button class="price-cta">無料で登録する</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">人気プラン</div>
+      <div class="price-name">学校スタンダード</div>
+      <div class="price-target">単一校向け</div>
+      <div class="price-amount">
+        <span class="price-num">¥9,800</span>
+        <span class="price-unit">/ 月</span>
+      </div>
+      <div class="price-note">年間契約 月額換算 (税抜)</div>
+      <ul class="price-features">
+        <li>月10回までの授業マッチング</li>
+        <li>AI推薦システム利用</li>
+        <li>専用ビデオ会議システム</li>
+        <li>事務手続き代行</li>
+        <li>教員向け研修付き</li>
+        <li>専任サポート担当</li>
+      </ul>
+      <button class="price-cta">お問い合わせ</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-name">教育委員会</div>
+      <div class="price-target">複数校・自治体向け</div>
+      <div class="price-amount">
+        <span class="price-num">要相談</span>
+      </div>
+      <div class="price-note">校数・規模に応じた個別見積もり</div>
+      <ul class="price-features">
+        <li>管轄校への一括導入</li>
+        <li>ダッシュボードでの一元管理</li>
+        <li>API連携・SSO対応</li>
+        <li>カスタム研修プログラム</li>
+        <li>導入支援コンサルティング</li>
+        <li>24時間優先サポート</li>
+      </ul>
+      <button class="price-cta">資料請求</button>
+    </div>
+  </div>
+</section>
+
+<!-- VOICES -->
+<section class="voices-section" id="voices">
+  <div class="section-label">VOICES</div>
+  <h2 class="section-title">参加した人の声。</h2>
+
+  <div class="voices-grid">
+    <div class="voice-card v1">
+      <p class="voice-text">
+        東京から、北海道の小学校で授業ができる時代。子どもたちの「面白い!」という反応が画面越しでも伝わってきて、自分の方が学ばせてもらっています。
+      </p>
+      <div class="voice-author">
+        <div class="voice-avatar">山</div>
+        <div>
+          <div class="voice-name">山田 健太郎</div>
+          <div class="voice-role">IT企業勤務 / 30代</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="voice-card v2">
+      <p class="voice-text">
+        小規模校でも、東京の専門家から直接学べる機会を提供できるようになりました。子どもたちが自ら進路を考えるきっかけになっています。
+      </p>
+      <div class="voice-author">
+        <div class="voice-avatar">佐</div>
+        <div>
+          <div class="voice-name">佐藤 直子 校長</div>
+          <div class="voice-role">島根県・公立小学校</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="voice-card v3">
+      <p class="voice-text">
+        定年退職後、自分の経験を活かす場を探していました。マナビブリッジで月2回、農業について話す時間が、私の生きがいになっています。
+      </p>
+      <div class="voice-author">
+        <div class="voice-avatar">鈴</div>
+        <div>
+          <div class="voice-name">鈴木 三郎</div>
+          <div class="voice-role">元農業技術者 / 60代</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="news-section" id="news">
+  <div class="opp-header">
+    <div>
+      <div class="section-label">NEWS</div>
+      <h2 class="section-title" style="margin-bottom: 0;">お知らせ・最新情報。</h2>
+    </div>
+    <button class="btn-large ghost">すべて見る</button>
+  </div>
+
+  <div class="news-list">
+    <div class="news-item">
+      <span class="news-date">2026.05.07</span>
+      <span class="news-cat notice">お知らせ</span>
+      <span class="news-title">春の新規募集キャンペーンを開始しました — 全国120校が新たに参加</span>
+      <span class="news-arrow">→</span>
+    </div>
+    <div class="news-item">
+      <span class="news-date">2026.04.22</span>
+      <span class="news-cat media">メディア</span>
+      <span class="news-title">日本経済新聞「地方教育の新しいかたち」特集にて当サービスが紹介されました</span>
+      <span class="news-arrow">→</span>
+    </div>
+    <div class="news-item">
+      <span class="news-date">2026.04.10</span>
+      <span class="news-cat update">アップデート</span>
+      <span class="news-title">AI推薦機能をリニューアル — マッチング精度が前バージョン比 32% 向上</span>
+      <span class="news-arrow">→</span>
+    </div>
+    <div class="news-item">
+      <span class="news-date">2026.03.28</span>
+      <span class="news-cat event">イベント</span>
+      <span class="news-title">5/15 オンラインボランティア向け説明会を開催 — 参加者募集中</span>
+      <span class="news-arrow">→</span>
+    </div>
+    <div class="news-item">
+      <span class="news-date">2026.03.15</span>
+      <span class="news-cat notice">お知らせ</span>
+      <span class="news-title">福岡県教育委員会との連携協定を締結 — 県内全公立校での導入が決定</span>
+      <span class="news-arrow">→</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">よくあるご質問。</h2>
+
+  <div class="faq-list">
+    <details class="faq-item" open>
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">教員免許がなくてもボランティアとして参加できますか?</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        はい、教員免許は必須ではありません。ご自身の専門分野や社会人経験を、子どもたちに伝えていただくことが目的です。授業の進め方については、登録後に受講できる無料研修プログラムでサポートいたします。また、すべての授業には学校側の教員が立ち会いますのでご安心ください。
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">どのくらいの時間的負担がかかりますか?</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        募集案件によって異なります。1回90分の単発授業から、半年間に渡る定期講義まで様々です。ご自身の都合に合わせて応募できる案件を選択いただけます。平均的なボランティアの方は、月に2〜4時間ほど活動されています。
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">海外在住でも参加できますか?</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        もちろん可能です。むしろ海外在住の方は、現地の文化や言語、職業観を伝える貴重な人材として歓迎されています。時差を考慮したマッチング機能もご用意しており、無理のないスケジュールで活動できます。
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">学校側の費用負担はありますか?</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        学校・教育委員会向けには月額9,800円〜のプランをご用意しています。詳しくは料金プランのセクションをご覧ください。なお、自治体によっては補助金制度の対象となる場合がありますので、お問い合わせください。
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">必要な機材や環境を教えてください</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        パソコン(またはタブレット)、Webカメラ、マイク、安定したインターネット回線、そしてGoogleアカウントがあればOKです。授業はGoogle Classroom / Google Meet を使って行うため、特別なアプリのインストールは不要。学校側はGIGA端末の既存環境のまま参加できます。機材に不安がある方には、初期セットアップサポートも無料で提供しています。
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        <span class="faq-q-mark">Q</span>
+        <span class="faq-q-text">トラブルがあった場合のサポート体制は?</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <div class="faq-answer">
+        24時間対応のサポート窓口を設けています。授業中の技術トラブル、生徒対応の相談など、教育専門のスタッフが即時対応いたします。また、すべての授業には学校側教員が立ち会いますので、ボランティアの方が単独で対応する場面はありません。
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners-section">
+  <div class="partners-label">— 協賛・連携 —</div>
+  <div class="partners-grid">
+    <div class="partner-logo">文部科学省<br>後援</div>
+    <div class="partner-logo">日本教育新聞<br>掲載</div>
+    <div class="partner-logo">福岡県<br>教育委員会</div>
+    <div class="partner-logo">全国校長会<br>推薦</div>
+    <div class="partner-logo">日本財団<br>支援</div>
+    <div class="partner-logo">教育CSR<br>協議会</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>あなたの経験を、<br>誰かの可能性に。</h2>
+  <p>
+    登録は3分で完了。まずはどんな募集があるか、覗いてみませんか?
+  </p>
+  <div class="cta-buttons">
+    <button class="btn-large primary">
+      無料で登録する
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+    <button class="btn-large ghost">資料請求(学校向け)</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="logo">
+        <svg class="logo-mark" viewBox="0 0 64 64" fill="none">
+          <rect width="64" height="64" rx="14" fill="#faf7f0" fill-opacity="0.1" stroke="#faf7f0" stroke-opacity="0.3" stroke-width="1"/>
+          <circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/>
+          <circle cx="32" cy="32" r="5.5" fill="#c9a961"/>
+        </svg>
+        <span>まなびのわ</span>
+      </a>
+      <p>全国の学校・教育委員会と、社会人ボランティアをオンラインでつなぐマッチングプラットフォーム。地理的な制約を越えて、教育に新しい風を。</p>
+      <div class="footer-social">
+        <a class="social-icon" aria-label="X (Twitter)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+        <a class="social-icon" aria-label="Facebook">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a class="social-icon" aria-label="Instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+          </svg>
+        </a>
+        <a class="social-icon" aria-label="YouTube">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h4>サービス</h4>
+      <ul>
+        <li><a href="#how">仕組み</a></li>
+        <li><a href="#opportunities">募集一覧</a></li>
+        <li><a href="#region">地域連携・アプリ</a></li>
+        <li><a href="#pricing">料金プラン</a></li>
+        <li><a href="#">導入事例</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>サポート</h4>
+      <ul>
+        <li><a href="#faq">よくある質問</a></li>
+        <li><a href="#">お問い合わせ</a></li>
+        <li><a href="#">利用ガイド</a></li>
+        <li><a href="#">研修プログラム</a></li>
+        <li><a href="#">資料ダウンロード</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>運営</h4>
+      <ul>
+        <li><a href="#">運営会社</a></li>
+        <li><a href="#">代表メッセージ</a></li>
+        <li><a href="#news">ニュース</a></li>
+        <li><a href="#">採用情報</a></li>
+        <li><a href="#">取材・お問合せ</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>安心・安全</h4>
+      <ul>
+        <li><a href="#safety">安全への取り組み</a></li>
+        <li><a href="#">プライバシーポリシー</a></li>
+        <li><a href="#">利用規約</a></li>
+        <li><a href="#">情報セキュリティ</a></li>
+        <li><a href="#">公益性の取組</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>© 2026 まなびのわ All rights reserved.</div>
+    <div class="footer-legal">
+      <a href="#">特定商取引法に基づく表記</a>
+      <a href="#">サイトマップ</a>
+      <a href="#">English</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
