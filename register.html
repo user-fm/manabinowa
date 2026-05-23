@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新規登録 | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="board-post.html">掲示板</a></li><li><a href="profile.html">プロフィール</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="login.html">ログイン</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="eyebrow">Create Account</div>
+        <h1>利用者の役割に合わせて登録する。</h1>
+        <p>学校・生徒・外部サポーター・管理者の権限を分け、必要な情報だけを入力できる登録画面です。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container split">
+        <aside class="card card-pad">
+          <h3>登録後の流れ</h3>
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-date">1</div><div>基本情報を登録</div></div>
+            <div class="timeline-item"><div class="timeline-date">2</div><div>学校または本人確認</div></div>
+            <div class="timeline-item"><div class="timeline-date">3</div><div>プロフィール公開範囲を設定</div></div>
+          </div>
+        </aside>
+        <form class="form-panel" data-demo-form data-success="登録内容を確認しました。審査・認証フローに接続できます。">
+          <h2>新規登録フォーム</h2>
+          <div class="choice-grid">
+            <label class="choice"><input type="radio" name="role" checked><strong>教員</strong><small>依頼承認・活動管理</small></label>
+            <label class="choice"><input type="radio" name="role"><strong>外部サポーター</strong><small>学習支援・助言</small></label>
+            <label class="choice"><input type="radio" name="role"><strong>地域団体</strong><small>依頼投稿・連携</small></label>
+          </div>
+          <div class="form-grid">
+            <label class="field"><span>氏名</span><input type="text" placeholder="山田 太郎"></label>
+            <label class="field"><span>所属</span><input type="text" placeholder="〇〇小学校 / 団体名"></label>
+            <label class="field"><span>メールアドレス</span><input type="email" placeholder="example@school.jp"></label>
+            <label class="field"><span>電話番号</span><input type="tel" placeholder="090-0000-0000"></label>
+            <label class="field full"><span>利用目的</span><textarea placeholder="利用したい機能や支援内容を入力してください"></textarea></label>
+          </div>
+          <label class="check-row"><input type="checkbox" required><span>利用規約と個人情報の取り扱いに同意します。</span></label>
+          <button class="btn btn-primary" type="submit">登録内容を確認</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

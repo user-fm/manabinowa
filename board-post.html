@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>掲示板投稿フォーム | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="board-post.html" aria-current="page">掲示板</a></li><li><a href="applications.html">応募履歴</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="board-detail.html">投稿詳細例</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="eyebrow">Board Post</div>
+        <h1>掲示板投稿フォーム</h1>
+        <p>学校内の質問、地域連携依頼、部活動相談を投稿できます。投稿内容はAI確認と教員承認を経て公開されます。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container split">
+        <aside class="card card-pad">
+          <h3>投稿前の確認</h3>
+          <div class="notice-box">個人情報、緊急性の高い相談、不適切表現が含まれる場合は公開前に学校側へ通知されます。</div>
+          <div class="tag-list"><span class="tag">AI確認</span><span class="tag">教員承認</span><span class="tag">ログ保存</span></div>
+        </aside>
+        <form class="form-panel" data-demo-form data-success="投稿内容を下書きとして保存しました。">
+          <h2>投稿内容</h2>
+          <div class="form-grid">
+            <label class="field"><span>カテゴリ</span><select><option>学習支援の質問</option><option>課外活動相談</option><option>地域連携依頼</option><option>お知らせ</option></select></label>
+            <label class="field"><span>公開範囲</span><select><option>学校内のみ</option><option>承認済みサポーターまで</option><option>地域団体まで</option></select></label>
+            <label class="field full"><span>タイトル</span><input type="text" placeholder="例：中2数学の一次関数について質問したい"></label>
+            <label class="field full"><span>本文</span><textarea placeholder="困っていること、希望する支援内容、日程などを入力してください"></textarea></label>
+            <label class="field"><span>希望期限</span><input type="date"></label>
+            <label class="field"><span>添付ファイル</span><input type="file"></label>
+          </div>
+          <label class="check-row"><input type="checkbox" required><span>投稿内容が学校側に保存・確認されることに同意します。</span></label>
+          <button class="btn btn-primary" type="submit">下書き保存</button>
+          <a class="btn btn-secondary" href="board-detail.html">詳細表示の例を見る</a>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

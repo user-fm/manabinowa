@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アカウント設定 | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="applications.html">応募履歴</a></li><li><a href="profile.html">プロフィール</a></li><li><a href="account-settings.html" aria-current="page">設定</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="login.html">ログアウト</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero slim">
+      <div class="container">
+        <div class="eyebrow">Account Settings</div>
+        <h1>アカウント設定一覧</h1>
+        <p>認証、通知、公開範囲、ログイン履歴を一画面で確認できます。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container split">
+        <aside class="card card-pad">
+          <div class="profile-head">
+            <div class="profile-avatar">山</div>
+            <div><h3>山田 太郎</h3><p>外部サポーター / 認証済み</p></div>
+          </div>
+          <div class="tag-list"><span class="tag">Google連携中</span><span class="tag">2段階確認 推奨</span></div>
+        </aside>
+        <section class="form-panel">
+          <h2>設定項目</h2>
+          <div class="settings-row"><div><strong>Googleアカウント連携</strong><p class="helper">tarou@example.jp と連携中</p></div><button class="btn btn-secondary" type="button">確認</button></div>
+          <div class="settings-row"><div><strong>メール通知</strong><p class="helper">応募結果、返信、承認依頼を通知します。</p></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+          <div class="settings-row"><div><strong>プロフィール公開</strong><p class="helper">学校関係者と承認済み依頼者に公開</p></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+          <div class="settings-row"><div><strong>ログイン履歴</strong><p class="helper">2026/05/23 09:12 Chromebook</p></div><button class="btn btn-secondary" type="button">履歴を見る</button></div>
+          <div class="settings-row"><div><strong>退会・利用停止</strong><p class="helper">活動ログは学校側の監査要件に合わせて保管されます。</p></div><button class="btn btn-secondary" type="button">手続き</button></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

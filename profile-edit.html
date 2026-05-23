@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロフィール編集 | まなびのわ</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d2b"/><circle cx="32" cy="32" r="18" fill="none" stroke="#faf7f0" stroke-width="3"/><circle cx="32" cy="32" r="5.5" fill="#c9a961"/></svg><span>まなびのわ</span></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-label="メニュー" aria-expanded="false">☰</button>
+    <ul class="nav-links"><li><a href="index.html">TOP</a></li><li><a href="opportunities.html">募集一覧</a></li><li><a href="profile.html">プロフィール</a></li><li><a href="account-settings.html">設定</a></li></ul>
+    <div class="nav-actions"><a class="btn btn-secondary" href="profile.html">戻る</a></div>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="eyebrow">Edit Profile</div>
+        <h1>プロフィール編集</h1>
+        <p>学校側に公開する情報と、マッチングに使う得意分野を更新します。</p>
+      </div>
+    </section>
+    <section class="compact-section">
+      <div class="container split">
+        <aside class="card card-pad">
+          <div class="profile-avatar">山</div>
+          <h3>公開プレビュー</h3>
+          <p>更新した自己紹介や対応可能時間は、承認済みの学校関係者に表示されます。</p>
+        </aside>
+        <form class="form-panel" data-demo-form data-success="プロフィールの変更内容を保存しました。">
+          <h2>基本情報</h2>
+          <div class="form-grid">
+            <label class="field"><span>表示名</span><input type="text" value="山田 太郎"></label>
+            <label class="field"><span>肩書き</span><input type="text" value="外部サポーター"></label>
+            <label class="field"><span>得意分野</span><input type="text" value="数学, ICT, 教材作成"></label>
+            <label class="field"><span>対応可能時間</span><input type="text" value="平日 17:00-20:00"></label>
+            <label class="field full"><span>自己紹介</span><textarea>中学生向けの数学質問対応とICT教材づくりを支援しています。</textarea></label>
+            <label class="field"><span>公開範囲</span><select><option>承認済み学校に公開</option><option>非公開</option><option>応募先にのみ公開</option></select></label>
+            <label class="field"><span>通知</span><select><option>メールで受け取る</option><option>受け取らない</option></select></label>
+          </div>
+          <button class="btn btn-primary" type="submit">保存する</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
