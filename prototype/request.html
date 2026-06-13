@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 依頼の作成</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="teacher.html">ホーム</a> ＞ 依頼の作成</div>
+  <button class="back" onclick="location.href='teacher.html'">← もどる</button>
+  <h2>ボランティア依頼の作成</h2>
+  <div class="form-box">
+    <label>教科</label>
+    <select id="reqSubject">
+      <option value="" selected disabled hidden class="form-placeholder">選択してください</option>
+      <option>算数・数学</option>
+      <option>国語</option>
+      <option>理科</option>
+      <option>社会</option>
+      <option>英語</option>
+    </select>
+    <label>対象学年</label>
+    <select id="reqGrade">
+      <option value="" selected disabled hidden class="form-placeholder">選択してください</option>
+      <option>小4</option><option>小5</option><option>小6</option>
+      <option>中1</option><option>中2</option><option>中3</option>
+    </select>
+    <label>希望日時</label>
+    <div class="row">
+      <input type="date" id="reqDate" value="2026-06-24">
+      <input type="time" id="reqTime" value="16:00">
+    </div>
+    <label>依頼内容</label>
+    <textarea id="reqDetail" placeholder="例）放課後学習で、分数が苦手な児童3名の個別指導をお願いしたいです"></textarea>
+    <button class="btn" onclick="submitRequest()">候補を探す</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/request.js"></script>
+</body>
+</html>

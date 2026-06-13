@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 役割の選択</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>あなたの立場を選んでください</h2>
+  <p class="lead">アカウントの種類によって使える機能が変わります。</p>
+  <div class="role-list">
+    <button class="role-btn" onclick="login('teacher')">
+      <span class="role-icon">教員の方</span>
+      <b>教師</b>
+      <small>ボランティアへの依頼・地域依頼の確認</small>
+    </button>
+    <button class="role-btn" onclick="login('student')">
+      <span class="role-icon">生徒の方</span>
+      <b>生徒</b>
+      <small>オンラインで学習支援を受ける</small>
+    </button>
+    <button class="role-btn" onclick="login('volunteer')">
+      <span class="role-icon">ボランティアの方</span>
+      <b>ボランティア</b>
+      <small>全国の学校の学習支援に参加</small>
+    </button>
+    <button class="role-btn" onclick="login('community')">
+      <span class="role-icon">地域の方</span>
+      <b>地域住民・団体</b>
+      <small>学校へ依頼を出す</small>
+    </button>
+    <button class="role-btn" onclick="login('admin')">
+      <span class="role-icon">学校管理者の方</span>
+      <b>学校管理者</b>
+      <small>AI監視アラートの確認</small>
+    </button>
+    <button class="role-btn" onclick="login('board')">
+      <span class="role-icon">教育委員会の方</span>
+      <b>教育委員会</b>
+      <small>統計・レポートの閲覧</small>
+    </button>
+  </div>
+  <p class="hint">※ ボランティア・地域の方の初回登録には運営の審査があります（3営業日以内）。</p>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script>initPage();</script>
+</body>
+</html>

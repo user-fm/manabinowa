@@ -1,0 +1,65 @@
+@charset "utf-8";
+
+/* マッチング候補ページ */
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #777;
+  margin: 30px 0;
+}
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #ddd;
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.candidate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cand-info { flex: 1; }
+.cand-info small {
+  display: block;
+  color: #777;
+  font-size: 12px;
+}
+.cand-right { text-align: right; }
+.match-rate {
+  color: var(--green-dark);
+  font-weight: bold;
+  font-size: 14px;
+}
+.waiting-note {
+  display: none;
+  background: var(--green-bg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+.waiting-note small { color: #777; }

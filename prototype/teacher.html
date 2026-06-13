@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 教師用ホーム</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs">ホーム</div>
+  <h2>教師用ホーム</h2>
+  <p class="lead">hal小学校　田中先生</p>
+  <div class="cards">
+    <div class="card" onclick="location.href='request.html'">
+      <h3>ボランティア依頼を作る</h3>
+      <p>教科や日時を入力すると、AIが条件の合うボランティアを探して候補を出します。</p>
+      <span class="badge" id="reqBadge">依頼なし</span>
+    </div>
+    <div class="card" onclick="location.href='inbox.html'">
+      <h3>地域からの依頼 <span class="count" id="inboxCount">2</span></h3>
+      <p>地域の方からの依頼を確認して、受け入れるかどうかを決めます。</p>
+    </div>
+    <div class="card" onclick="openSession()">
+      <h3>オンライン指導</h3>
+      <p id="sessionText">マッチングが成立すると、Meetの予定が自動で作られます。</p>
+      <span class="badge" id="sessionBadge">予定なし</span>
+    </div>
+    <div class="card" onclick="location.href='library.html'">
+      <h3>教材ライブラリ</h3>
+      <p>受け入れた地域依頼は、探究学習などの教材として貯まっていきます。</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/teacher.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - オンライン指導</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/session.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="#" onclick="goHome();return false">ホーム</a> ＞ オンライン指導</div>
+  <button class="back" onclick="goHome()">← もどる</button>
+  <h2>オンライン指導セッション</h2>
+  <div class="session-area">
+    <div class="meet-box">
+      <p>Google Meet の画面（モック）</p>
+      <div class="members">
+        <span>田中先生</span><span>ひかりさん</span><span id="volMember">山本さん</span>
+      </div>
+    </div>
+    <div class="chat-box">
+      <div class="chat-title">チャット</div>
+      <div class="chat-log" id="chatLog">
+        <div class="msg system">チャットの内容はAIが自動でチェックしています</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn btn-small" onclick="sendChat()">送信</button>
+      </div>
+    </div>
+  </div>
+  <p class="hint">デモ：「連絡先」「住所」などの言葉を含むメッセージを送ると、AI検知の動きが確認できます。</p>
+  <button class="btn btn-gray" onclick="endSession()">セッションを終了</button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/session.js"></script>
+</body>
+</html>

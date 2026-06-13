@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 保護者の方の同意手続き</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/consent.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>保護者の方の同意手続き</h2>
+  <p class="lead">hal小学校 春 太郎 さんの「まなびのわ」利用について、内容をご確認ください。</p>
+
+  <div class="form-box" id="consentForm">
+    <ul class="consent-list">
+      <li>地域のボランティアによる、オンラインでの学習支援を受けること</li>
+      <li>お子さまの安全のため、初回の指導は録画されること</li>
+      <li>チャットの内容をAIが自動で確認し、必要に応じて学校へ通知されること</li>
+      <li>個人情報が国内のサーバーで適切に管理されること</li>
+    </ul>
+    <label>保護者氏名（電子署名）</label>
+    <input type="text" id="parentName" placeholder="例）はる たろう">
+    <label class="agree-row"><input type="checkbox" id="agreeCheck"> 上記の内容に同意します</label>
+    <button class="btn" onclick="submitConsent()">同意して送信する</button>
+  </div>
+
+  <div class="form-box" id="consentDone" style="display:none">
+    <h3>同意を受け付けました</h3>
+    <p class="done-text">ご協力ありがとうございました。お子さまはすべての機能を利用できるようになります。<br>
+    このページは閉じていただいて構いません。</p>
+    <button class="btn btn-small" onclick="location.href='student.html'">（デモ）生徒の画面を見る</button>
+  </div>
+
+  <p class="hint">このページは、生徒の登録時に保護者の方へ送られるメールのリンクから開く想定です。アカウントの登録は必要ありません。</p>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/consent.js"></script>
+</body>
+</html>

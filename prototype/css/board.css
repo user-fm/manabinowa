@@ -1,0 +1,26 @@
+@charset "utf-8";
+
+/* 教育委員会ページ（統計カード） */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.stat {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 18px;
+  text-align: center;
+}
+.stat .num {
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--green-dark);
+}
+.stat .label {
+  font-size: 12px;
+  color: #888;
+}

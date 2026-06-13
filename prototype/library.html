@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 教材ライブラリ</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="teacher.html">ホーム</a> ＞ 教材ライブラリ</div>
+  <button class="back" onclick="location.href='teacher.html'">← もどる</button>
+  <h2>教材ライブラリ</h2>
+  <input type="text" class="search" id="libSearch" placeholder="キーワードで検索" oninput="renderLibrary()">
+  <div id="libList"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/library.js"></script>
+</body>
+</html>
