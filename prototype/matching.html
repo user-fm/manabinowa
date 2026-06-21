@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - マッチング候補</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/matching.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="teacher.html">ホーム</a> ＞ <a href="request.html">依頼の作成</a> ＞ マッチング候補</div>
+  <button class="back" onclick="location.href='teacher.html'">← もどる</button>
+  <h2>マッチング候補</h2>
+  <div class="loading" id="loading">
+    <span class="spinner"></span>AIが条件の合うボランティアを探しています...
+  </div>
+  <div id="candidates"></div>
+  <div class="waiting-note" id="waitingNote">
+    依頼を送りました。相手の承諾を待っています（期限は48時間）。<br>
+    <small>デモ：下のメニューでボランティア画面に切り替えると続きが見られます。</small>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/matching.js"></script>
+</body>
+</html>

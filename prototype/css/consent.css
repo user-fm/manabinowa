@@ -1,0 +1,38 @@
+@charset "utf-8";
+
+/* 保護者の同意ページ */
+
+.consent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 6px;
+}
+.consent-list li {
+  position: relative;
+  padding: 8px 0 8px 24px;
+  border-bottom: 1px dashed #ddd;
+  font-size: 14px;
+}
+.consent-list li:before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 16px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--green);
+  border-radius: 50%;
+}
+
+.agree-row {
+  font-weight: normal !important;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.agree-row input { width: auto !important; }
+
+.done-text {
+  font-size: 14px;
+  color: #555;
+}

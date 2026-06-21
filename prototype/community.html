@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 学校への依頼</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs">ホーム</div>
+  <div class="subnav"><a href="messages.html">メッセージ</a><a href="settings.html">設定</a></div>
+  <h2>学校への依頼</h2>
+  <p class="lead">ポスター制作や行事参加のお願いなど、学校への依頼をまなびのわが取り次ぎます。</p>
+  <div class="form-box">
+    <label>カテゴリ</label>
+    <select id="comCat">
+      <option>ポスター制作</option>
+      <option>行事参加</option>
+      <option>講師派遣</option>
+      <option>その他</option>
+    </select>
+    <label>依頼先の学校</label>
+    <select id="comSchool">
+      <option>hal小学校</option>
+      <option>hal中学校</option>
+    </select>
+    <label>締切</label>
+    <input type="date" id="comDue" value="2026-07-31">
+    <label>タイトル</label>
+    <input type="text" id="comTitle" placeholder="例）秋の収穫祭ちらしの制作">
+    <label>依頼内容</label>
+    <textarea id="comDetail" placeholder="お願いしたい内容や、提供できる材料などを書いてください"></textarea>
+    <button class="btn" onclick="submitCommunity()">送信する</button>
+  </div>
+  <h3 class="sub-title">送信済みの依頼</h3>
+  <div id="myComList"><p class="none-text">まだありません。</p></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/community.js"></script>
+</body>
+</html>

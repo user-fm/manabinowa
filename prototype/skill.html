@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - スキル登録</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="volunteer.html">ホーム</a> ＞ スキル登録</div>
+  <button class="back" onclick="location.href='volunteer.html'">← もどる</button>
+  <h2>スキル登録</h2>
+  <div class="form-box">
+    <label>教えられる教科</label>
+    <div class="check-row">
+      <label><input type="checkbox" checked> 算数・数学</label>
+      <label><input type="checkbox" checked> 英語</label>
+      <label><input type="checkbox"> 国語</label>
+      <label><input type="checkbox"> 理科</label>
+      <label><input type="checkbox"> 社会</label>
+    </div>
+    <label>対象学年</label>
+    <div class="check-row">
+      <label><input type="checkbox"> 小1〜小3</label>
+      <label><input type="checkbox" checked> 小4〜小6</label>
+      <label><input type="checkbox" checked> 中学生</label>
+    </div>
+    <label>空いている時間</label>
+    <input type="text" id="skillTime" value="土日 13:00〜17:00">
+    <label>自己紹介</label>
+    <textarea id="skillIntro" placeholder="指導経験や得意なことなど"></textarea>
+    <button class="btn" onclick="submitSkill()">登録する</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/skill.js"></script>
+</body>
+</html>

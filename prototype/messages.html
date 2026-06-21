@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - メッセージ</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/messages.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="#" onclick="goHome();return false">ホーム</a> ＞ メッセージ</div>
+  <h2>メッセージ</h2>
+  <p class="lead">関係する大人どうしの連絡用です。日程の相談などにお使いください。</p>
+
+  <div class="msg-layout">
+    <div class="contact-list" id="contactList"></div>
+    <div class="thread">
+      <div class="thread-head" id="threadHead">相手を選んでください</div>
+      <div class="thread-log" id="threadLog"></div>
+      <div class="thread-input">
+        <input type="text" id="msgInput" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="btn btn-small" onclick="sendMsg()">送信</button>
+      </div>
+    </div>
+  </div>
+  <p class="hint">このやり取りはAIによる監視の対象外です（児童は参加しないため）。</p>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/messages.js"></script>
+</body>
+</html>

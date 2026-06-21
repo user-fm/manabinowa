@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 設定</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="#" onclick="goHome();return false">ホーム</a> ＞ 設定</div>
+  <h2>設定</h2>
+
+  <h3 class="sub-title">アカウント</h3>
+  <div class="form-box">
+    <p>お名前：<b id="acctName">-</b></p>
+    <p>ご利用の立場：<b id="acctRole">-</b></p>
+    <button class="btn btn-gray" onclick="logout()">ログアウト</button>
+  </div>
+
+  <h3 class="sub-title">通知</h3>
+  <div class="form-box">
+    <label>受け取る方法</label>
+    <div class="check-row">
+      <label><input type="checkbox" id="prefMail" checked> メール</label>
+      <label><input type="checkbox" id="prefPush" checked> ブラウザ通知</label>
+    </div>
+
+    <label>受け取る種類</label>
+    <div class="check-row">
+      <label><input type="checkbox" checked> マッチング</label>
+      <label><input type="checkbox" checked> 指導のリマインド</label>
+      <label><input type="checkbox" checked> 地域からの依頼</label>
+      <label><input type="checkbox" checked> 安全アラート</label>
+      <label><input type="checkbox" checked> メッセージ</label>
+    </div>
+
+    <button class="btn" onclick="saveSettings()">保存する</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/settings.js"></script>
+</body>
+</html>

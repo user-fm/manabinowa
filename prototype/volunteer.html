@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - ボランティア用ホーム</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs">ホーム</div>
+  <div class="subnav"><a href="messages.html">メッセージ</a><a href="settings.html">設定</a></div>
+  <h2>ボランティア用ホーム</h2>
+  <p class="lead">山本さん、こんにちは。</p>
+  <div class="cards">
+    <div class="card" onclick="location.href='skill.html'">
+      <h3>スキル登録</h3>
+      <p>教えられる教科・学年・空き時間を登録すると、学校からの依頼が届くようになります。</p>
+      <span class="badge" id="skillBadge">未登録</span>
+    </div>
+    <div class="card">
+      <h3>学校からの依頼</h3>
+      <div id="incomingBox"><p>新しい依頼はありません。</p></div>
+    </div>
+    <div class="card" onclick="openSession()">
+      <h3>オンライン指導</h3>
+      <p id="sessionText">承諾した指導のMeetに参加します。</p>
+      <span class="badge" id="sessionBadge">予定なし</span>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/volunteer.js"></script>
+</body>
+</html>

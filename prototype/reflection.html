@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 指導の振り返り</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/reflection.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs"><a href="#" onclick="goHome();return false">ホーム</a> ＞ 指導の振り返り</div>
+  <h2>指導の振り返り</h2>
+  <p class="lead">教師・ボランティアそれぞれが入力します。内容をもとにAIが要約をつくります。</p>
+
+  <div class="form-box">
+    <label>教師の振り返り</label>
+    <textarea id="teacherNote" placeholder="児童の様子や理解度など">分数の通分でつまずいていた児童が、図を使った説明で自分で解けるようになった。</textarea>
+
+    <label>ボランティアの振り返り</label>
+    <textarea id="volNote" placeholder="指導した内容や、次回への引き継ぎなど">図解を中心に進めた。次回は文章題への応用に入れそう。</textarea>
+
+    <button class="btn btn-gray" onclick="makeSummary()">AIで要約をつくる</button>
+
+    <div class="summary" id="summaryBox" style="display:none">
+      <div class="summary-label">AIによる要約</div>
+      <p id="summaryText"></p>
+    </div>
+
+    <label class="rate-label">ボランティアの評価</label>
+    <div class="stars" id="stars">
+      <span onclick="setStar(1)">★</span><span onclick="setStar(2)">★</span><span onclick="setStar(3)">★</span><span onclick="setStar(4)">★</span><span onclick="setStar(5)">★</span>
+    </div>
+
+    <label>録画リンク（任意）</label>
+    <input type="text" id="recLink" placeholder="録画した場合はリンクを貼り付け">
+
+    <button class="btn" onclick="saveReflection()">保存して終了</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/reflection.js"></script>
+</body>
+</html>
