@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import * as schema from "./schema";
 
 // Drizzle + postgres.js(TCP接続=Node ランタイム専用。Edge では使わない)。
 // 用途: マイグレーション・バッチ・信頼ジョブ(service role 相当)。
@@ -14,4 +15,4 @@ const globalForDb = globalThis as unknown as {
 const client = globalForDb.pg ?? postgres(connectionString, { prepare: false, max: 10 });
 if (process.env.NODE_ENV !== "production") globalForDb.pg = client;
 
-export const db = drizzle(client);
+export const db = drizzle(client, { schema });
