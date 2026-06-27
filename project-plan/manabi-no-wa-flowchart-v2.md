@@ -1,6 +1,6 @@
 # 「まなびのわ」業務フロー図
 
-**v2.10 - 2026年6月16日**
+**v2.11 - 2026年6月20日**
 
 **プロジェクト名**: まなびのわ (Manabi no Wa)
 **コンセプト**: 途切れない、学びのサイクル
@@ -13,6 +13,7 @@
 **v2.8 変更点**: 要件定義書 §6(技術スタック)・§8(データモデル概要)・§9(外部サービス連携)を表形式で本書末尾の付録へ移設(章番号は維持。冗長な「採用しなかった理由」散文は候補表に集約)。フロー本体に変更なし。
 **v2.9 変更点**: 要件定義書 §4(機能要件)を §0.3「機能要件・カバレッジ表」へ統合(全46件をフロー・工程IDと一覧化、主要な方針注記を併記)。要件定義書はこれで §5・§7・§15・§16 のみ。フロー本体に変更なし。
 **v2.10 変更点**: パイロット(試験導入)要素を企画から削除。Flow M の M-06「パイロット校テスト(満足度≧80%)」を「受入(UAT)テスト完了」へ置換(関連注記・補足も更新)。
+**v2.11 変更点**: §8 を主要16テーブルの概要から、database.md 由来の**全26テーブル一覧**(区分付き)に差し替え。
 
 ## 0. 略号 (アクター・登場主体)
 
@@ -1243,28 +1244,40 @@ F-AUTH-07 はB-12+K-11〜15でカバー)
 | IaC | 当面なし | 現構成では対象ほぼなし。AWS移行時にTerraform |
 
 
-## 8. データモデル概要
+## 8. データモデル(全テーブル一覧)
 
-| テーブル | 概要 |
-|---|---|
-| `users` | 全ユーザー(6ロール統一。運営は別管理、保護者はアカウントなし) |
-| `schools` | 学校マスター(全国公立小中学校) |
-| `classroom_courses` | Classroomコース同期キャッシュ |
-| `volunteer_offers` | ボランティアの提供スキル(pgvector埋め込み) |
-| `volunteer_requests` | 学校からの依頼(pgvector埋め込み) |
-| `volunteer_sessions` | マッチング後の指導セッション |
-| `community_requests` | 地域からの依頼 |
-| `community_library` | 受入済み地域依頼の素材ライブラリ(F-COM-06) |
-| `chat_messages` | セッション内チャット |
-| `audit_logs` | AI監視・安全ログ(F-AI-04、3年以上保管) |
-| `block_list` | ボランティアブロックリスト(F-AI-05) |
-| `consent_records` | 保護者の電子署名同意(F-AUTH-07) |
-| `notification_logs` | 通知配信履歴(J-10) |
-| `notification_prefs` | ユーザ別通知設定(F-NTF-04) |
-| `inquiries` | お問い合わせ(F-INQ-01〜04) |
-| `messages` | ロール間メッセージ(F-MSG。大人のみ・AI監視対象外) |
+> database.md の全 26 テーブル(`区分` は同書 §1.4.1 準拠)。`classroom_courses` のみ初期リリース対象外(F-GC後送)のため、初期DDLは実質 25 テーブル。
 
-> 全テーブルにRLS(`auth.uid()` × `role`)。詳細スキーマ(全25テーブル・列定義・索引・RLSポリシー・3NF整理・`actor_type`)は別紙 `manabi-no-wa-database.md`。
+| テーブル | 区分 | 概要 |
+|---|---|---|
+| `municipalities` | マスタ | 自治体マスタ(都道府県を集約) |
+| `schools` | マスタ | 学校マスタ(全国公立小中学校) |
+| `users` | マスタ | 全ユーザー(6ロール統一。運営は別管理・保護者はアカウントなし) |
+| `operators` | マスタ | サービス運営者(別管理。審査/対応の主体・F-AUTH-06) |
+| `volunteer_offers` | トランザクション | ボランティアの提供スキル(pgvector埋め込み) |
+| `volunteer_requests` | トランザクション | 学校からの依頼(pgvector埋め込み) |
+| `match_offers` | トランザクション | 依頼への打診と承諾/辞退(F-VOL-04) |
+| `volunteer_sessions` | トランザクション | マッチング後の指導セッション |
+| `session_participants` | トランザクション(中間) | セッション参加者と役割(教師/V/生徒) |
+| `volunteer_reviews` | トランザクション | 指導の評価履歴(F-VOL-07) |
+| `community_requests` | トランザクション | 地域からの依頼 |
+| `community_library` | トランザクション | 受入済み地域依頼の素材ライブラリ(F-COM-06) |
+| `classroom_courses` | 同期キャッシュ | Classroomコース・名簿(**初期リリース対象外**/F-GC後送) |
+| `chat_messages` | トランザクション | セッション内チャット(AI監視対象) |
+| `audit_logs` | ログ・監査 | 全イベント監査ログ(3年以上・追記専用・F-AI-04) |
+| `safety_alerts` | トランザクション | AI監視アラートの対応管理(open/ack/resolved・H-07〜09) |
+| `block_list` | トランザクション | ボランティアのブロック(F-AI-05) |
+| `consent_records` | トランザクション | 保護者の電子署名同意(F-AUTH-07) |
+| `notification_prefs` | 設定 | 通知チャネル設定(メール/Push) |
+| `notification_categories` | 設定(中間) | カテゴリ別通知 on/off |
+| `push_subscriptions` | 設定・購読 | Web Push 購読(F-NTF-02) |
+| `notification_logs` | ログ・監査 | 通知配信履歴(J-10) |
+| `inquiries` | トランザクション | お問い合わせ(F-INQ-01〜04) |
+| `message_threads` | トランザクション | ロール間メッセージのスレッド |
+| `message_thread_participants` | トランザクション(中間) | スレッド参加者(大人ロールのみ) |
+| `messages` | トランザクション | ロール間メッセージ本文(F-MSG) |
+
+> 全テーブルにRLS(`auth.uid()` × `role`)。列定義・型・索引(pgvector HNSW / pg_trgm GIN)・FKのON DELETE・enum・RLSポリシー・3NF整理・`actor_type` は別紙 `manabi-no-wa-database.md` を参照。
 
 ## 9. 外部サービス連携
 

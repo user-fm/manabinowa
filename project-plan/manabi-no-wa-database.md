@@ -3,7 +3,7 @@
 **v1.4 - 2026年6月16日**
 
 **プロジェクト名**: まなびのわ (Manabi no Wa)
-**基準ドキュメント**: 要件定義書 v1.9 / 業務フロー図 v2.10(§8 データモデル概要)
+**基準ドキュメント**: 要件定義書 v1.9 / 業務フロー図 v2.11(§8 データモデル一覧)
 **v1.2 変更点(DDL化前の再検証)**: (1) `school_type` enum を §3 に追加 (2) ヘルパ `current_role()` は Postgres 組込みと衝突するため `app_current_role()` へ改名 (3) §7.1 にFKの ON DELETE 方針を明記 (4) users の備考が operators 下に紛れていたのを是正
 **v1.3 変更点(再検証2巡目)**: (5) 必須FK/キー列に `not null` を補完(volunteer_sessions の請求/教師/V/学校・volunteer_reviews.session_id・community_library.source_request_id/school_id・consent_records.token) (6) `message_thread_participants` の RLS(自分の参加行 SELECT)を明記し `messages` ポリシー成立を担保 (7) `block_list.requested_by` の ON DELETE を SET NULL に(申請者削除でもブロック記録を保持)
 **v1.4 変更点(テーブル追加/整理)**: (8) `safety_alerts` を新設(AI監視アラートの対応ワークフロー H-07〜H-09。status=open/acknowledged/resolved の3段階)。`alert_status` enum 追加 (9) `classroom_courses` を初期リリース対象外(F-GC後送)と明記。全 26 テーブル(初期 25)
@@ -762,7 +762,7 @@ M:N および属性付きの関連は専用の関連表で表現する:
 
 **以上**
 
-- 本設計は業務フロー図 v2.10(§8 データモデル概要)および要件定義書 v1.9 に基づく
+- 本設計は業務フロー図 v2.11(§8 データモデル一覧)および要件定義書 v1.9 に基づく
 - 全 26 テーブル(マスタ 4 / 設定・購読 3 / キャッシュ 1 / トランザクション 16 / ログ・監査 2)。うち `classroom_courses` は初期リリース対象外(F-GC後送)のため、初期DDLは実質 25 テーブル
 - 要件 §8 の主要16テーブルに加え、municipalities / operators / match_offers / volunteer_reviews / safety_alerts / notification_categories / push_subscriptions / session_participants / message_threads / message_thread_participants を定義
 - アクターの種別は `actor_type`(user/operator/parent/system/ai)で一元化(§1.4)
