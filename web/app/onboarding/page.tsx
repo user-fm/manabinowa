@@ -3,6 +3,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { completeOnboarding } from "./actions";
 
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+
 const ROLES = [
   { value: "teacher", label: "教師" },
   { value: "student", label: "生徒" },
@@ -19,10 +24,12 @@ export default async function OnboardingPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // すでに登録済みならトップへ
+  // 登録済みならトップへ
   const admin = createAdminClient();
   const { data: existing } = await admin.from("users").select("id").eq("id", user.id).maybeSingle();
   if (existing) redirect("/");
+
+  const { data: schools } = await admin.from("schools").select("id, name").order("name");
 
   const meta = user.user_metadata ?? {};
   const defaultName = (meta.full_name as string) ?? (meta.name as string) ?? "";
@@ -33,36 +40,33 @@ export default async function OnboardingPage() {
       <p className="mt-1 text-sm text-gray-600">{user.email}</p>
 
       <form action={completeOnboarding} className="mt-6 space-y-4">
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium">
-            役割
-          </label>
-          <select id="role" name="role" required className="mt-1 w-full rounded border p-2">
+        <Field label="役割" htmlFor="role">
+          <Select id="role" name="role" required defaultValue="">
             <option value="">選択してください</option>
             {ROLES.map((r) => (
               <option key={r.value} value={r.value}>
                 {r.label}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </Field>
 
-        <div>
-          <label htmlFor="fullName" className="block text-sm font-medium">
-            氏名
-          </label>
-          <input
-            id="fullName"
-            name="fullName"
-            defaultValue={defaultName}
-            required
-            className="mt-1 w-full rounded border p-2"
-          />
-        </div>
+        <Field label="氏名" htmlFor="fullName">
+          <Input id="fullName" name="fullName" defaultValue={defaultName} required />
+        </Field>
 
-        <button type="submit" className="rounded bg-gray-900 px-4 py-2 text-white">
-          登録する
-        </button>
+        <Field label="学校" htmlFor="schoolId" hint="(教師・生徒・学校管理者は必須)">
+          <Select id="schoolId" name="schoolId" defaultValue="">
+            <option value="">選択しない</option>
+            {(schools ?? []).map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </Select>
+        </Field>
+
+        <Button type="submit">登録する</Button>
       </form>
     </main>
   );

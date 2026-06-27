@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const VALID_ROLES = ["teacher", "student", "volunteer", "community", "admin", "board"] as const;
+const SCHOOL_ROLES = ["teacher", "student", "admin"];
 
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient();
@@ -15,31 +16,47 @@ export async function completeOnboarding(formData: FormData) {
 
   const role = String(formData.get("role") ?? "");
   const fullName = String(formData.get("fullName") ?? "").trim();
+  const schoolId = String(formData.get("schoolId") ?? "");
+
   if (!fullName || !(VALID_ROLES as readonly string[]).includes(role)) {
     redirect("/onboarding?error=invalid");
   }
 
-  // 個人Gmail(ボランティア/地域)は運営審査前提 → pending、学校系 → active
-  const accountStatus = role === "volunteer" || role === "community" ? "pending" : "active";
+  if (SCHOOL_ROLES.includes(role) && !schoolId) {
+    redirect("/onboarding?error=school");
+  }
 
   const admin = createAdminClient();
 
-  // 1) public.users を作成(RLSバイパス)
+  let finalSchoolId: string | null = null;
+  let municipalityCode: string | null = null;
+  if (schoolId && SCHOOL_ROLES.includes(role)) {
+    const { data: school } = await admin
+      .from("schools")
+      .select("id, municipality_code")
+      .eq("id", schoolId)
+      .maybeSingle();
+    if (!school) redirect("/onboarding?error=school");
+    finalSchoolId = school.id;
+    municipalityCode = school.municipality_code;
+  }
+
+  const accountStatus = role === "volunteer" || role === "community" ? "pending" : "active";
   const { error: insertError } = await admin.from("users").insert({
     id: user.id,
     role,
     account_status: accountStatus,
     full_name: fullName,
     email: user.email,
+    school_id: finalSchoolId,
+    municipality_code: municipalityCode,
   });
   if (insertError) redirect("/onboarding?error=db");
 
-  // 2) ロールを JWT クレーム(app_metadata)へ → RLS の app_current_role() が効くようになる
   await admin.auth.admin.updateUserById(user.id, {
-    app_metadata: { role, school_id: null },
+    app_metadata: { role, school_id: finalSchoolId },
   });
 
-  // 3) 現在セッションの JWT を更新して新クレームを反映(これが無いと role が乗らない)
   await supabase.auth.refreshSession();
 
   redirect("/");
