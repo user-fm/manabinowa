@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>OAuth 認証エラー - まなびのわ</title>
+
+  <link rel="stylesheet" href="common.css">
+
+  <link rel="stylesheet" href="css/oauth-error.css">
+
+  <script defer src="js/oauth-error.js"></script>
+</head>
+
+<body>
+
+  <div class="center-wrapper">
+
+    <img src="img/logo_48.png" alt="logo" class="center-logo">
+
+    <div class="error-box">
+
+      <h2 class="error-title">OAuth 認証エラー</h2>
+
+      <p class="lead">
+        ログイン処理中にエラーが発生しました。
+      </p>
+
+      <div class="error-detail">
+        <p><strong>Error Code:</strong> <span id="error-code"></span></p>
+        <p><strong>Description:</strong> <span id="error-desc"></span></p>
+      </div>
+
+      <p class="hint">
+        もう一度ログインをお試しください。<br>
+        エラーが続く場合は、学校の管理者へお問い合わせください。
+      </p>
+
+      <button class="btn back-btn"
+        onclick="location.href='index.html'">
+        ログイン画面へ戻る
+      </button>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
