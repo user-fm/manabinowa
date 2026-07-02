@@ -1,11 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { classifyUserByEmail, isRoleAllowedFor } from "@/lib/auth/classify-user";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const VALID_ROLES = ["teacher", "student", "volunteer", "community", "admin", "board"] as const;
-const SCHOOL_ROLES = ["teacher", "student", "admin"];
+// 学校の選択(school_id)が必須なロール。board(教育委員会)は特定校に属さないため対象外。
+const SCHOOL_REQUIRED_ROLES = ["teacher", "student", "admin"];
 
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient();
@@ -22,7 +24,14 @@ export async function completeOnboarding(formData: FormData) {
     redirect("/onboarding?error=invalid");
   }
 
-  if (SCHOOL_ROLES.includes(role) && !schoolId) {
+  // メールドメインの校内/個人判定と選択ロールが一致するかをサーバー側で再検証。
+  // (クライアントの絞り込みは改ざん可能なため、書き込み前にここで必ず弾く)
+  const classification = await classifyUserByEmail(user.email);
+  if (!isRoleAllowedFor(role, classification)) {
+    redirect("/onboarding?error=role");
+  }
+
+  if (SCHOOL_REQUIRED_ROLES.includes(role) && !schoolId) {
     redirect("/onboarding?error=school");
   }
 
@@ -30,7 +39,7 @@ export async function completeOnboarding(formData: FormData) {
 
   let finalSchoolId: string | null = null;
   let municipalityCode: string | null = null;
-  if (schoolId && SCHOOL_ROLES.includes(role)) {
+  if (schoolId && SCHOOL_REQUIRED_ROLES.includes(role)) {
     const { data: school } = await admin
       .from("schools")
       .select("id, municipality_code")
