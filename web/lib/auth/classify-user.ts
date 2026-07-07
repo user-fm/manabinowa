@@ -66,11 +66,16 @@ export async function classifyUserByEmail(
   }
 
   const admin = createAdminClient();
-  const { data: matched } = await admin
+  // workspace_domain は DB 側で小文字保証が無い(text unique のみ)。大文字混じりで
+  // 登録されていても取りこぼさないよう、ilike で大小無視のマッチを取り、JS 側でも
+  // 小文字化して厳密照合する(ilike の "_"/"%" ワイルドカード誤マッチを防ぐ二重チェック。
+  // ilike は複数行を返し得るため maybeSingle は使わず find で拾う)。
+  const { data: rows } = await admin
     .from("schools")
     .select("id, name, workspace_domain")
-    .eq("workspace_domain", domain)
-    .maybeSingle();
+    .ilike("workspace_domain", domain);
+
+  const matched = (rows ?? []).find((s) => s.workspace_domain?.toLowerCase() === domain);
 
   if (matched?.workspace_domain) {
     return {
