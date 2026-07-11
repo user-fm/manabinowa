@@ -1,61 +1,94 @@
-import { requireRole } from "@/lib/auth";
-import { fmtDateTime } from "@/lib/labels";
-import { createAdminClient } from "@/lib/supabase/admin";
+"use client";
 
-export default async function MessagesPage() {
-  const profile = await requireRole([
-    "teacher",
-    "volunteer",
-    "community",
-    "admin",
-    "board",
-  ]);
+import { useEffect } from "react";
+import Head from "next/head";
 
-  const admin = createAdminClient();
-  const { data: rows } = await admin
-    .from("message_thread_participants")
-    .select("thread_id, message_threads(id, last_message_at, created_at)")
-    .eq("user_id", profile.id);
+export default function MessagesPage() {
+  useEffect(() => {
+    
+    const loadScript = (src: string) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = false;
+      document.body.appendChild(script);
+    };
 
-  const threads = (rows ?? [])
-    .map(
-      (row) =>
-        row.message_threads as unknown as {
-          id: string;
-          last_message_at: string | null;
-          created_at: string;
-        } | null
-    )
-    .filter((t) => t !== null)
-    .sort((a, b) =>
-      (b.last_message_at ?? b.created_at).localeCompare(
-        a.last_message_at ?? a.created_at
-      )
-    );
+    loadScript("/js/data.js");
+    loadScript("/js/common.js");
+    loadScript("/js/messages.js");
+  }, []);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold">メッセージ</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        大人ロール同士の連絡用です。新規スレッドの作成・返信は準備中です。
-      </p>
+    <>
+      <Head>
+        <title>まなびのわ - メッセージ</title>
+        <link rel="icon" href="/img/logo_32.png" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/messages.css" />
+      </Head>
 
-      {threads.length === 0 ? (
-        <p className="mt-6 text-sm text-gray-500">スレッドはまだありません。</p>
-      ) : (
-        <ul className="mt-6 space-y-3">
-          {threads.map((t) => (
-            <li key={t.id} className="rounded border p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span>スレッド</span>
-                <span className="text-xs text-gray-500">
-                  最終更新: {fmtDateTime(t.last_message_at ?? t.created_at)}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+      <div className="header" id="header"></div>
+
+      <div className="container">
+        <div className="crumbs">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              // @ts-ignore
+              if (typeof goHome === "function") goHome();
+            }}
+          >
+            ホーム
+          </a>
+          ＞ メッセージ
+        </div>
+
+        <h2>メッセージ</h2>
+
+        <p className="lead">
+          関係する大人どうしの連絡用です。日程の相談などにお使いください。
+        </p>
+
+        <div className="msg-layout">
+          <div className="contact-list" id="contactList"></div>
+
+          <div className="thread">
+            <div className="thread-head" id="threadHead">
+              相手を選んでください
+            </div>
+
+            <div className="thread-log" id="threadLog"></div>
+
+            <div className="thread-input">
+              <input
+                type="text"
+                id="msgInput"
+                placeholder="メッセージを入力"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    // @ts-ignore
+                    if (typeof sendMsg === "function") sendMsg();
+                  }
+                }}
+              />
+              <button
+                className="btn btn-small"
+                onClick={() => {
+                  // @ts-ignore
+                  if (typeof sendMsg === "function") sendMsg();
+                }}
+              >
+                送信
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p className="hint">
+          このやり取りはAIによる監視の対象外です（児童は参加しないため）。
+        </p>
+      </div>
+    </>
   );
 }
