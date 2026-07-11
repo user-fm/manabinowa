@@ -2,14 +2,20 @@
 initPage('teacher');
 
 function submitRequest() {
+  const subject = document.getElementById('reqSubject').value;
+  const grade = document.getElementById('reqGrade').value;
   const detail = document.getElementById('reqDetail').value.trim();
+  if (!subject || !grade) {
+    alert('教科と対象学年を選んでください');
+    return;
+  }
   if (!detail) {
     alert('依頼内容を入力してください');
     return;
   }
   state.request = {
-    subject: document.getElementById('reqSubject').value,
-    grade: document.getElementById('reqGrade').value,
+    subject: subject,
+    grade: grade,
     date: document.getElementById('reqDate').value,
     time: document.getElementById('reqTime').value,
     detail: detail
