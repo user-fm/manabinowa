@@ -20,7 +20,11 @@
     <div class="meet-box">
       <p>Google Meet の画面（モック）</p>
       <div class="members">
-        <span>田中先生</span><span>ひかりさん</span><span id="volMember">山本さん</span>
+        <span>田中先生</span><span>太郎さん</span><span id="volMember">山本さん</span>
+      </div>
+      <div class="pause-cover" id="pauseCover">
+        セッションを一時停止しています<br>
+        <small>学校の先生・管理者が内容を確認しています</small>
       </div>
     </div>
     <div class="chat-box">
@@ -34,7 +38,22 @@
       </div>
     </div>
   </div>
-  <p class="hint">デモ：「連絡先」「住所」などの言葉を含むメッセージを送ると、AI検知の動きが確認できます。</p>
+
+  <div class="wb-box">
+    <div class="wb-head">
+      <span class="wb-title">ホワイトボード</span>
+      <span class="wb-tools">
+        <button data-color="#333333" class="on" onclick="setPen(this)">黒</button>
+        <button data-color="#c0392b" onclick="setPen(this)">赤</button>
+        <button data-color="#2a6fbb" onclick="setPen(this)">青</button>
+        <button onclick="clearBoard()">全部消す</button>
+      </span>
+    </div>
+    <canvas id="wb" height="240"></canvas>
+    <p class="hint">問題や図をここに書いて説明できます。書いた内容は参加者全員に共有される想定です。</p>
+  </div>
+
+  <p class="hint">デモ：「連絡先」「住所」などの言葉を含むメッセージを送るとAI検知の動きが、「会おう」などを送ると一時停止までの動きが確認できます。</p>
   <button class="btn btn-gray" onclick="endSession()">セッションを終了</button>
 </div>
 

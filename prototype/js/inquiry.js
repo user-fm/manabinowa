@@ -54,15 +54,22 @@ if (state.role === 'student') {
 function submitInquiry() {
   const title = document.getElementById('inqTitle').value.trim();
   const content = document.getElementById('inqBody').value.trim();
-  if (!state.role) {
+  let from = '';
+  if (state.role) {
+    from = roleNames[state.role] + '（' + (senderNames[state.role] || '') + '）';
+  } else {
     const mail = document.getElementById('inqMail').value.trim();
     if (!mail) { alert('メールアドレスを入力してください'); return; }
+    from = 'メール連絡先：' + mail;
   }
   if (!title || !content) {
     alert('件名と内容を入力してください');
     return;
   }
   const cat = document.getElementById('inqCat').value;
+  // 運営の対応一覧に届く
+  state.inquiries.unshift({ from: from, cat: cat, title: title, text: content, status: '' });
+  saveState();
   if (cat.indexOf('削除') !== -1) {
     toast('削除のお手続きについて、本人確認のうえご連絡します');
   } else {

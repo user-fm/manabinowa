@@ -7,13 +7,16 @@ const roleNames = {
   volunteer: 'ボランティア',
   community: '地域住民・団体',
   admin: '学校管理者',
-  board: '教育委員会'
+  board: '教育委員会',
+  operator: 'サービス運営者'
 };
 
 function loadState() {
+  // あとからデータ項目が増えても動くように、初期値の上に保存分をかぶせる
+  const base = JSON.parse(JSON.stringify(INITIAL_DATA));
   const saved = sessionStorage.getItem('manabinowa');
-  if (saved) return JSON.parse(saved);
-  return JSON.parse(JSON.stringify(INITIAL_DATA)); // 初回はコピーを作る
+  if (saved) Object.assign(base, JSON.parse(saved));
+  return base;
 }
 
 function saveState() {
@@ -40,11 +43,11 @@ function initPage(role) {
     header.style.display = 'flex';
   }
 
-  // フッター（全ページ共通。リンク先はまだないのでダミー）
+  // フッター（全ページ共通）
   const footer = document.createElement('div');
   footer.className = 'site-footer';
-  footer.innerHTML = '<a href="#">利用規約</a><a href="#">プライバシーポリシー</a>'
-    + '<a href="#">ヘルプ</a><a href="inquiry.html">お問い合わせ</a>'
+  footer.innerHTML = '<a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a>'
+    + '<a href="help.html">ヘルプ</a><a href="inquiry.html">お問い合わせ</a>'
     + '<small>© 2026 まなびのわ</small>';
   document.body.appendChild(footer);
 
@@ -59,6 +62,7 @@ function initPage(role) {
     + '<option value="community.html">地域住民・団体</option>'
     + '<option value="admin.html">学校管理者</option>'
     + '<option value="board.html">教育委員会</option>'
+    + '<option value="operator.html">サービス運営者</option>'
     + '<option value="consent.html">保護者（同意画面）</option>'
     + '</select>'
     + '<span class="demo-note">画面プロトタイプです。入力内容は保存されません。</span>';
@@ -69,6 +73,13 @@ function login(role) {
   state.role = role;
   saveState();
   goHome();
+}
+
+// ボランティア・地域の方は、初回に登録と運営の審査がある
+function startRegister(role) {
+  state.signupRole = role;
+  saveState();
+  location.href = 'register.html';
 }
 
 function logout() {
@@ -84,7 +95,8 @@ function homeUrl() {
     volunteer: 'volunteer.html',
     community: 'community.html',
     admin: 'admin.html',
-    board: 'board.html'
+    board: 'board.html',
+    operator: 'operator.html'
   };
   return pages[state.role] || 'index.html';
 }

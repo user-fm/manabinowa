@@ -16,6 +16,22 @@ const INITIAL_DATA = {
   matched: false,      // 承諾済みかどうか
   consent: false,      // 保護者の同意が済んでいるか
 
+  signupRole: '',      // 登録フォームで選んだ役割（ボランティア/地域）
+
+  // ボランティア・地域の登録申請（運営が審査する）
+  applications: [
+    { name: '高橋 誠', role: 'volunteer', note: '元塾講師です。算数と理科の指導経験があります。／本人確認資料：提出済み', status: '' }
+  ],
+
+  // 学校管理者からのブロック申請（運営が審査する）
+  blockReqs: [],
+
+  // お問い合わせ（運営が対応する）
+  inquiries: [
+    { from: 'メール連絡先：guardian@example.com', cat: '同意手続きについて', title: '同意のメールが届きません',
+      text: '子どもが学校で登録をしたのですが、同意のお願いメールが見当たりません。', status: '' }
+  ],
+
   // 地域からの依頼（教師の受信箱）
   community: [
     { id: 1, from: 'みなと商店街振興組合', cat: 'ポスター制作', title: '夏祭りポスターの制作', due: '7/10',

@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-const VALID_ROLES = ["teacher", "student", "volunteer", "community", "admin", "board"] as const;
-const SCHOOL_ROLES = ["teacher", "student", "admin"];
+const SCHOOL_PATH_ROLES = ["teacher", "student", "admin", "board"];
+const PERSONAL_PATH_ROLES = ["volunteer", "community"];
+// 学校への所属を持つロール（教委は学校には紐付けない）
+const SCHOOL_MEMBER_ROLES = ["teacher", "student", "admin"];
 
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient();
@@ -16,30 +18,25 @@ export async function completeOnboarding(formData: FormData) {
 
   const role = String(formData.get("role") ?? "");
   const fullName = String(formData.get("fullName") ?? "").trim();
-  const schoolId = String(formData.get("schoolId") ?? "");
 
-  if (!fullName || !(VALID_ROLES as readonly string[]).includes(role)) {
-    redirect("/onboarding?error=invalid");
-  }
-
-  if (SCHOOL_ROLES.includes(role) && !schoolId) {
-    redirect("/onboarding?error=school");
-  }
+  if (!fullName) redirect("/onboarding?error=invalid");
 
   const admin = createAdminClient();
 
-  let finalSchoolId: string | null = null;
-  let municipalityCode: string | null = null;
-  if (schoolId && SCHOOL_ROLES.includes(role)) {
-    const { data: school } = await admin
-      .from("schools")
-      .select("id, municipality_code")
-      .eq("id", schoolId)
-      .maybeSingle();
-    if (!school) redirect("/onboarding?error=school");
-    finalSchoolId = school.id;
-    municipalityCode = school.municipality_code;
-  }
+  // メールドメインから所属校を再照合
+  const domain = user.email.split("@")[1] ?? "";
+  const { data: school } = await admin
+    .from("schools")
+    .select("id, municipality_code")
+    .eq("workspace_domain", domain)
+    .maybeSingle();
+
+  const allowedRoles = school ? SCHOOL_PATH_ROLES : PERSONAL_PATH_ROLES;
+  if (!allowedRoles.includes(role)) redirect("/onboarding?error=invalid");
+
+  const isSchoolMember = school !== null && SCHOOL_MEMBER_ROLES.includes(role);
+  const finalSchoolId = isSchoolMember ? school.id : null;
+  const municipalityCode = isSchoolMember ? school.municipality_code : null;
 
   const accountStatus = role === "volunteer" || role === "community" ? "pending" : "active";
   const { error: insertError } = await admin.from("users").insert({
