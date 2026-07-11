@@ -17,7 +17,7 @@ export async function createRequest(formData: FormData) {
     .select("role, school_id")
     .eq("id", user.id)
     .maybeSingle();
-  if (!profile || profile.role !== "teacher" || !profile.school_id) redirect("/");
+  if (profile?.role !== "teacher" || !profile.school_id) redirect("/");
 
   const subject = String(formData.get("subject") ?? "").trim();
   const grade = String(formData.get("grade") ?? "").trim();
@@ -40,5 +40,5 @@ export async function createRequest(formData: FormData) {
     redirect("/teacher/requests/new?error=db");
   }
 
-  redirect("/");
+  redirect("/teacher/requests");
 }

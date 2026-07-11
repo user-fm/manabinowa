@@ -412,10 +412,26 @@ $$;
 -- =====================================================================
 -- 6. RLS(全テーブル有効化 + ポリシー)
 --    authenticated に広く GRANT し、アクセスは RLS で制御。
---    service_role は BYPASSRLS のためポリシー不要(運営・バッチ・AI監視・通知配信)。
+--    service_role は BYPASSRLS のため RLS ポリシーは不要だが、
+--    テーブル権限(GRANT)自体は必要(運営・バッチ・AI監視・通知配信)。
 -- =====================================================================
 grant usage on schema public to authenticated;
 grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
+
+grant usage on schema public to service_role;
+grant select, insert, update, delete on all tables in schema public to service_role;
+grant usage, select on all sequences in schema public to service_role;
+
+-- 今後作成するテーブル・シーケンスにも自動で同権限を付与
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;
+alter default privileges in schema public
+  grant usage, select on sequences to authenticated;
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to service_role;
+alter default privileges in schema public
+  grant usage, select on sequences to service_role;
 
 alter table municipalities             enable row level security;
 alter table schools                    enable row level security;
