@@ -24,3 +24,53 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ==========================
+   背景オーロラ
+   ========================== */
+
+body {
+  background: transparent;
+  position: relative;
+  overflow-x: hidden;
+  background: #f5f7f5;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(120px);
+  animation: floatBg 18s ease-in-out infinite alternate;
+}
+
+body::before {
+  opacity: 0.3;
+  background:
+    radial-gradient(circle at 30% 40%, #b8efbe 0%, transparent 45%),
+    radial-gradient(circle at 75% 65%, #fff3b5 0%, transparent 40%);
+}
+
+body::after {
+  opacity: 0.45;
+  background:
+    radial-gradient(circle at 70% 25%, #d5f6c8 0%, transparent 45%),
+    radial-gradient(circle at 25% 80%, #fff9d6 0%, transparent 35%);
+  animation-duration: 24s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes floatBg {
+  0% {
+    transform: translate(-3%, -2%) scale(1);
+  }
+  50% {
+    transform: translate(4%, 3%) scale(1.15);
+  }
+  100% {
+    transform: translate(-2%, 5%) scale(1.05);
+  }
+}

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { AppHeader } from "@/components/app-header";
+import { AppFooter } from "@/components/app-footer";
+// import "./home.css";
 
 const ROLE_LABEL: Record<string, string> = {
   teacher: "教師",
@@ -70,41 +73,51 @@ export default async function Home() {
   const isPending = profile.account_status === "pending";
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-600">{profile.full_name} さん</span>
-        <form action="/auth/signout" method="post">
-          <button type="submit" className="rounded border px-4 py-2 text-sm">
-            ログアウト
-          </button>
-        </form>
-      </div>
+    <>
+      <AppHeader 
+        userName={profile.full_name}
+        role={ROLE_LABEL[profile.role] ?? profile.role}
+      />
+      <main className="mx-auto max-w-[960px] px-5 py-[25px]">
+        {/* app-headerで表示 */}
+        {/* <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">{profile.full_name} さん</span>
+          <form action="/auth/signout" method="post">
+            <button type="submit" className="rounded border px-4 py-2 text-sm">
+              ログアウト
+            </button>
+          </form>
+        </div> */}
 
-      <p className="mt-6 text-sm text-gray-500">{ROLE_LABEL[profile.role] ?? profile.role} のホーム</p>
-      <h1 className="mt-1 text-2xl font-bold">ようこそ、{profile.full_name} さん</h1>
+        <p className="mt-6 text-sm text-gray-500">{ROLE_LABEL[profile.role] ?? profile.role} のホーム</p>
+        <h1 className="mt-1 w-full text-2xl font-bold">ようこそ、{profile.full_name} さん</h1>
 
-      {isPending ? (
-        <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-          現在、運営の審査待ちです。承認されると各機能が利用できます。
-        </p>
-      ) : null}
+        {isPending ? (
+          <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+            現在、運営の審査待ちです。承認されると各機能が利用できます。
+          </p>
+        ) : null}
 
-      <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {menu.map((item) => (
-          <li key={item.label}>
-            {item.href ? (
-              <Link href={item.href} className="block rounded border p-4 hover:bg-gray-50">
-                {item.label}
-              </Link>
-            ) : (
-              <div className="flex items-center justify-between rounded border border-dashed p-4 text-gray-400">
-                <span>{item.label}</span>
-                <span className="text-xs">準備中</span>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-    </main>
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+          {menu.map((item) => (
+            <li key={item.label}>
+              {item.href ? (
+                <Link href={item.href} className="block rounded border border-gray-300 bg-white p-4 transition-all hover:border-[#155c38] hover:shadow-md">
+                  <span>
+                    {item.label}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex items-center justify-between rounded border border-dashed border-gray-300 p-4 text-gray-400">
+                  <span>{item.label}</span>
+                  <span className="text-xs">準備中</span>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </main>
+      <AppFooter />
+    </>
   );
 }

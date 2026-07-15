@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createRequest } from "./actions";
+import { AppHeader } from "@/components/app-header";
+import { AppFooter } from "@/components/app-footer";
+import Link from "next/link";
 
 export default async function NewRequestPage() {
   const supabase = await createClient();
@@ -16,7 +19,7 @@ export default async function NewRequestPage() {
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("users")
-    .select("role, school_id")
+    .select("role, school_id, full_name")
     .eq("id", user.id)
     .maybeSingle();
   if (!profile) redirect("/onboarding");
@@ -31,29 +34,39 @@ export default async function NewRequestPage() {
   }
 
   return (
-    <main className="mx-auto mt-12 max-w-md px-4">
-      <h1 className="text-xl font-bold">ボランティア依頼を作成</h1>
-      <form action={createRequest} className="mt-6 space-y-4">
-        <Field label="教科" htmlFor="subject">
-          <Input id="subject" name="subject" required placeholder="例: 数学" />
-        </Field>
-        <Field label="学年" htmlFor="grade">
-          <Input id="grade" name="grade" required placeholder="例: 中学2年" />
-        </Field>
-        <Field label="希望日時" htmlFor="desiredAt" hint="(任意)">
-          <Input id="desiredAt" name="desiredAt" type="datetime-local" />
-        </Field>
-        <Field label="依頼内容" htmlFor="detail">
-          <textarea
-            id="detail"
-            name="detail"
-            required
-            rows={4}
-            className="mt-1 w-full rounded border p-2"
-          />
-        </Field>
-        <Button type="submit">作成する</Button>
-      </form>
-    </main>
+    <>
+      <AppHeader
+        userName={profile.full_name}
+        role="教師"
+      />
+      <main className="mx-auto mt-12 max-w-md px-4">
+         <Link href="/" className="mb-4 inline-flex items-center text-sm font-medium text-[#155c38] hover:underline">
+          ← 戻る
+        </Link>
+        <h1 className="text-xl font-bold mb-4">ボランティア依頼を作成</h1>
+        <form action={createRequest} className="rounded-lg bg-white p-8 shadow-sm">
+          <Field label="教科" htmlFor="subject">
+            <Input id="subject" name="subject" required placeholder="例: 数学" />
+          </Field>
+          <Field label="学年" htmlFor="grade">
+            <Input id="grade" name="grade" required placeholder="例: 中学2年" />
+          </Field>
+          <Field label="希望日時" htmlFor="desiredAt" hint="(任意)">
+            <Input id="desiredAt" name="desiredAt" type="datetime-local" />
+          </Field>
+          <Field label="依頼内容" htmlFor="detail">
+            <textarea
+              id="detail"
+              name="detail"
+              required
+              rows={4}
+              className="mt-1 w-full rounded border border-gray-300 p-2"
+            />
+          </Field>
+          <Button type="submit">作成する</Button>
+        </form>
+      </main>
+      <AppFooter />
+    </>
   );
 }
