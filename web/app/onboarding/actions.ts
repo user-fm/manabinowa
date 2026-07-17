@@ -1,13 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { classifyUserByEmail, isRoleAllowedFor } from "@/lib/auth/classify-user";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-const SCHOOL_PATH_ROLES = ["teacher", "student", "admin", "board"];
-const PERSONAL_PATH_ROLES = ["volunteer", "community"];
-// 学校への所属を持つロール（教委は学校には紐付けない）
-const SCHOOL_MEMBER_ROLES = ["teacher", "student", "admin"];
+const VALID_ROLES = ["teacher", "student", "volunteer", "community", "admin", "board"] as const;
+// 学校の選択(school_id)が必須なロール。board(教育委員会)は特定校に属さないため対象外。
+const SCHOOL_REQUIRED_ROLES = ["teacher", "student", "admin"];
 
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient();
@@ -18,25 +18,37 @@ export async function completeOnboarding(formData: FormData) {
 
   const role = String(formData.get("role") ?? "");
   const fullName = String(formData.get("fullName") ?? "").trim();
+  const schoolId = String(formData.get("schoolId") ?? "");
 
-  if (!fullName) redirect("/onboarding?error=invalid");
+  if (!fullName || !(VALID_ROLES as readonly string[]).includes(role)) {
+    redirect("/onboarding?error=invalid");
+  }
+
+  // メールドメインの校内/個人判定と選択ロールが一致するかをサーバー側で再検証。
+  // (クライアントの絞り込みは改ざん可能なため、書き込み前にここで必ず弾く)
+  const classification = await classifyUserByEmail(user.email);
+  if (!isRoleAllowedFor(role, classification)) {
+    redirect("/onboarding?error=role");
+  }
+
+  if (SCHOOL_REQUIRED_ROLES.includes(role) && !schoolId) {
+    redirect("/onboarding?error=school");
+  }
 
   const admin = createAdminClient();
 
-  // メールドメインから所属校を再照合
-  const domain = user.email.split("@")[1] ?? "";
-  const { data: school } = await admin
-    .from("schools")
-    .select("id, municipality_code")
-    .eq("workspace_domain", domain)
-    .maybeSingle();
-
-  const allowedRoles = school ? SCHOOL_PATH_ROLES : PERSONAL_PATH_ROLES;
-  if (!allowedRoles.includes(role)) redirect("/onboarding?error=invalid");
-
-  const isSchoolMember = school !== null && SCHOOL_MEMBER_ROLES.includes(role);
-  const finalSchoolId = isSchoolMember ? school.id : null;
-  const municipalityCode = isSchoolMember ? school.municipality_code : null;
+  let finalSchoolId: string | null = null;
+  let municipalityCode: string | null = null;
+  if (schoolId && SCHOOL_REQUIRED_ROLES.includes(role)) {
+    const { data: school } = await admin
+      .from("schools")
+      .select("id, municipality_code")
+      .eq("id", schoolId)
+      .maybeSingle();
+    if (!school) redirect("/onboarding?error=school");
+    finalSchoolId = school.id;
+    municipalityCode = school.municipality_code;
+  }
 
   const accountStatus = role === "volunteer" || role === "community" ? "pending" : "active";
   const { error: insertError } = await admin.from("users").insert({
