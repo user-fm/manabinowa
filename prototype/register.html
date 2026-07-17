@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 利用登録</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="container">
+  <button class="back" onclick="location.href='role.html'">← もどる</button>
+  <h2>利用登録</h2>
+  <p class="lead" id="regLead"></p>
+
+  <div class="form-box" id="regForm">
+    <label>お名前（団体の場合は団体名）</label>
+    <input type="text" id="regName" placeholder="例）高橋 誠">
+    <label>本人確認資料の種類</label>
+    <select id="regIdType">
+      <option>運転免許証</option>
+      <option>マイナンバーカード</option>
+      <option>パスポート</option>
+      <option>健康保険証</option>
+    </select>
+    <label>本人確認資料のアップロード</label>
+    <input type="file" id="regFile">
+    <p class="hint">※ プロトタイプのため、実際にファイルを選ばなくても進めます。</p>
+    <label>自己紹介・活動への思い</label>
+    <textarea id="regIntro" placeholder="例）元塾講師です。算数と理科の指導経験があります。"></textarea>
+    <button class="btn" onclick="submitRegister()">登録を申請する</button>
+  </div>
+
+  <div class="form-box" id="regDone" style="display:none">
+    <h3>登録を受け付けました</h3>
+    <p>運営が内容を確認します（3営業日以内）。結果はメールでお知らせしますので、しばらくお待ちください。</p>
+    <button class="btn btn-small" onclick="demoApprove()">（デモ）承認されたことにして進む</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まなびのわ - 運営者ホーム</title>
+<link rel="icon" href="img/logo_32.png">
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div class="header" id="header"></div>
+
+<div class="container">
+  <div class="crumbs">ホーム</div>
+  <div class="subnav"><a href="messages.html">メッセージ</a><a href="settings.html">設定</a></div>
+  <h2>サービス運営者ホーム</h2>
+  <p class="lead">新規登録の審査、ブロック申請の審査、お問い合わせへの対応を行います。</p>
+
+  <h3 class="sub-title">新規登録の審査</h3>
+  <p class="hint">個人のアカウントで登録した方の本人確認です。3営業日以内の回答を目標にしています。</p>
+  <div id="appList"></div>
+
+  <h3 class="sub-title">ブロック申請の審査</h3>
+  <p class="hint">学校からの申請内容を確認して、ブロックリストに加えるかを判断します。</p>
+  <div id="blockList"></div>
+
+  <h3 class="sub-title">お問い合わせ</h3>
+  <div id="inqList"></div>
+
+  <p class="hint">※ この画面は、通常の画面とは別の運営専用URLから開く想定です。</p>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/operator.js"></script>
+</body>
+</html>

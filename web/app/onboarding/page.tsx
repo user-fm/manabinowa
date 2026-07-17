@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
 import { type AppRole, allowedRolesFor, classifyUserByEmail } from "@/lib/auth/classify-user";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
-import { completeOnboarding } from "./actions";
-
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { completeOnboarding } from "./actions";
 
 const ROLE_LABELS: Record<AppRole, string> = {
   teacher: "教師",
@@ -23,14 +22,12 @@ export default async function OnboardingPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user?.email) redirect("/login");
 
   // 登録済みならトップへ
   const admin = createAdminClient();
   const { data: existing } = await admin.from("users").select("id").eq("id", user.id).maybeSingle();
   if (existing) redirect("/");
-
-  const { data: schools } = await admin.from("schools").select("id, name").order("name");
 
   // メールドメインで校内/個人を判定し、選べるロールを絞り込む。
   //   校内(学校ドメイン) → 教師 / 生徒 / 学校管理者 / 教育委員会
@@ -65,17 +62,6 @@ export default async function OnboardingPage() {
 
         <Field label="氏名" htmlFor="fullName">
           <Input id="fullName" name="fullName" defaultValue={defaultName} required />
-        </Field>
-
-        <Field label="学校" htmlFor="schoolId" hint="(教師・生徒・学校管理者は必須)">
-          <Select id="schoolId" name="schoolId" defaultValue="">
-            <option value="">選択しない</option>
-            {(schools ?? []).map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </Select>
         </Field>
 
         <Button type="submit">登録する</Button>
