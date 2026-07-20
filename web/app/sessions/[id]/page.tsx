@@ -18,7 +18,9 @@ import { type ChatMessage, SessionChat } from "./session-chat";
 const ERROR_MESSAGE: Record<string, string> = {
   forbidden: "この操作を行う権限がありません。",
   closed: "このセッションはすでに終了しています。",
+  paused: "このセッションは中断中のため、操作できません。",
   not_running: "実施中のセッションのみ終了できます。",
+  empty_message: "メッセージを入力してください。",
   too_long: "メッセージが長すぎます（2000文字以内）。",
   invalid_url: "録画リンクは https:// で始まる URL を入力してください。",
   invalid_rating: "評価は1〜5から選んでください。",

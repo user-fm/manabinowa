@@ -23,6 +23,8 @@ export async function enterSession(formData: FormData) {
   if (session.status === "completed" || session.status === "cancelled") {
     redirect(`/sessions/${sessionId}?error=closed`);
   }
+  // 中断中のセッションは入室(=再開)させない。安全のため止めた状態を勝手に戻さない。
+  if (session.status === "paused") redirect(`/sessions/${sessionId}?error=paused`);
 
   const admin = createAdminClient();
 
@@ -72,15 +74,19 @@ const CHAT_BODY_MAX = 2000;
 export async function sendChatMessage(formData: FormData) {
   const sessionId = String(formData.get("sessionId") ?? "");
   const body = String(formData.get("body") ?? "").trim();
+  // 空メッセージは認証・アクセス判定より前に弾く。空リクエストで毎回DBを叩かないため。
+  if (!body) redirect(`/sessions/${sessionId}?error=empty_message`);
+
   const profile = await requireProfile();
   const { session, viewerRole } = await requireSessionAccess(sessionId, profile);
 
-  // 学校管理者は閲覧のみ。終了・中止済みのセッションには投稿できない。
+  // 学校管理者は閲覧のみ。終了・中止・中断中のセッションには投稿できない。
   if (viewerRole === "admin") redirect(`/sessions/${sessionId}?error=forbidden`);
   if (session.status === "completed" || session.status === "cancelled") {
     redirect(`/sessions/${sessionId}?error=closed`);
   }
-  if (!body) return;
+  // 中断中はAI監視の想定外状態になるため投稿を止める。
+  if (session.status === "paused") redirect(`/sessions/${sessionId}?error=paused`);
   if (body.length > CHAT_BODY_MAX) redirect(`/sessions/${sessionId}?error=too_long`);
 
   const admin = createAdminClient();
@@ -133,9 +139,11 @@ export async function saveRecordingUrl(formData: FormData) {
   const sessionId = String(formData.get("sessionId") ?? "");
   const url = String(formData.get("recordingUrl") ?? "").trim();
   const profile = await requireProfile();
-  const { viewerRole } = await requireSessionAccess(sessionId, profile);
+  const { session, viewerRole } = await requireSessionAccess(sessionId, profile);
 
   if (viewerRole !== "teacher") redirect(`/sessions/${sessionId}?error=forbidden`);
+  // 中止済みのセッションには録画リンクを登録させない。
+  if (session.status === "cancelled") redirect(`/sessions/${sessionId}?error=closed`);
 
   // 空文字は登録解除として扱う。値がある場合は https のみ許可する。
   if (url) {
@@ -175,6 +183,8 @@ export async function saveVolunteerReview(formData: FormData) {
   const { session, viewerRole } = await requireSessionAccess(sessionId, profile);
 
   if (viewerRole !== "teacher") redirect(`/sessions/${sessionId}?error=forbidden`);
+  // 評価は終了済みのセッションに対してのみ登録できる。
+  if (session.status !== "completed") redirect(`/sessions/${sessionId}?error=closed`);
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
     redirect(`/sessions/${sessionId}?error=invalid_rating`);
   }
