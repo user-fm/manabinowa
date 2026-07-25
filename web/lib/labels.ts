@@ -19,6 +19,13 @@ export const REQUEST_STATUS_LABEL: Record<string, string> = {
   expired: "期限切れ",
 };
 
+export const MATCH_OFFER_STATUS_LABEL: Record<string, string> = {
+  offered: "返答待ち",
+  accepted: "承諾",
+  declined: "辞退",
+  expired: "期限切れ",
+};
+
 export const COMMUNITY_STATUS_LABEL: Record<string, string> = {
   pending: "確認待ち",
   accepted: "受入",
