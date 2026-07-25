@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { requireProfile } from "@/lib/auth";
+import { moderateChatMessage } from "@/lib/safety";
 import { requireSessionAccess } from "@/lib/sessions";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -90,13 +92,21 @@ export async function sendChatMessage(formData: FormData) {
   if (body.length > CHAT_BODY_MAX) redirect(`/sessions/${sessionId}?error=too_long`);
 
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data: created, error } = await admin
     .from("chat_messages")
-    .insert({ session_id: sessionId, sender_id: profile.id, body });
-  if (error) {
-    console.error("チャット送信失敗", error.message);
+    .insert({ session_id: sessionId, sender_id: profile.id, body })
+    .select("id")
+    .single();
+  if (error || !created) {
+    console.error("チャット送信失敗", error?.message);
     redirect(`/sessions/${sessionId}?error=db`);
   }
+
+  // E-11 → H-01: AI監視(Hフロー)を並列起動する。
+  // 応答を返したあとに実行し、チャットのリアルタイム配信を待たせない。
+  after(async () => {
+    await moderateChatMessage(created.id as number);
+  });
 
   revalidatePath(`/sessions/${sessionId}`);
 }
