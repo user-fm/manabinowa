@@ -8,19 +8,35 @@ import {
   REQUEST_STATUS_LABEL,
   SESSION_STATUS_LABEL,
 } from "@/lib/labels";
-import { expireStaleOffers, findCandidates } from "@/lib/matching";
+import { findCandidates, offerDisplayStatus } from "@/lib/matching";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { offerToVolunteer, regenerateCandidates } from "./actions";
 
 const ERROR_MESSAGE: Record<string, string> = {
   offer: "依頼の送信に失敗しました。時間をおいて再度お試しください。",
   closed: "この依頼はすでに成立・終了しているため、追加の依頼は送れません。",
+  not_offerable:
+    "この方には現在依頼を送れません（すでに提示済み、または受け入れ条件を満たしていません）。候補を再検索してください。",
 };
 
 const NOTICE_MESSAGE: Record<string, string> = {
   offered: "ボランティアへ依頼を送りました。48時間以内の返答をお待ちください。",
   refreshed: "候補を検索し直しました。",
 };
+
+/**
+ * D-10: 条件一致で出した候補について、何が合っているかを示す。
+ * ベクトル検索の類似度と加重スコアは別物のため、％では並べない。
+ */
+function matchedConditions(
+  candidate: { subjects: string[]; grades: string[] },
+  request: { subject: string; grade: string },
+): string[] {
+  return [
+    candidate.subjects.includes(request.subject) ? "教科が一致" : null,
+    candidate.grades.includes(request.grade) ? "学年が一致" : null,
+  ].filter((v): v is string => v !== null);
+}
 
 export default async function TeacherRequestDetailPage({
   params,
@@ -41,9 +57,6 @@ export default async function TeacherRequestDetailPage({
     .eq("teacher_id", profile.id)
     .maybeSingle();
   if (!request) notFound();
-
-  // D-13: 表示前に承諾期限切れを反映してから提示状況を読む。
-  await expireStaleOffers();
 
   const { data: offers } = await admin
     .from("match_offers")
@@ -124,7 +137,7 @@ export default async function TeacherRequestDetailPage({
                 <div className="flex items-center justify-between">
                   <span>{(o.users as { full_name?: string } | null)?.full_name ?? "（不明）"}</span>
                   <span className="text-xs text-gray-500">
-                    {MATCH_OFFER_STATUS_LABEL[o.status] ?? o.status}
+                    {MATCH_OFFER_STATUS_LABEL[offerDisplayStatus(o)] ?? offerDisplayStatus(o)}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
@@ -151,6 +164,7 @@ export default async function TeacherRequestDetailPage({
           {usesKeywordMatch ? (
             <p className="mt-2 text-xs text-gray-500">
               ※ AI意味検索が未設定のため、教科・学年の一致で候補を表示しています。
+              この場合は適合度ではなく、一致した条件を表示します。
             </p>
           ) : null}
 
@@ -176,13 +190,28 @@ export default async function TeacherRequestDetailPage({
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-medium">{c.fullName}</span>
                     <span className="text-xs text-gray-500">
-                      適合度 {Math.round(c.score * 100)}％ ／ 実績 {c.sessionCount}回 ／ 評価{" "}
+                      {/* 適合度(類似度)は AI意味検索のときだけ出す。
+                          条件一致のスコアは意味が違うため、一致した条件で示す。 */}
+                      {c.matchType === "vector" ? `適合度 ${Math.round(c.score * 100)}％ ／ ` : ""}
+                      実績 {c.sessionCount}回 ／ 評価{" "}
                       {c.ratingAvg === null ? "—" : c.ratingAvg.toFixed(1)}
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
                     教科: {c.subjects.join("、") || "—"} ／ 学年: {c.grades.join("、") || "—"}
                   </p>
+                  {c.matchType === "keyword" && matchedConditions(c, request).length > 0 ? (
+                    <ul className="mt-2 flex flex-wrap gap-1">
+                      {matchedConditions(c, request).map((label) => (
+                        <li
+                          key={label}
+                          className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+                        >
+                          {label}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   {c.availability ? (
                     <p className="mt-1 text-xs text-gray-500">対応可能: {c.availability}</p>
                   ) : null}

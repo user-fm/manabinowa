@@ -204,11 +204,51 @@ export async function runMatching(requestId: string): Promise<Candidate[]> {
   return candidates;
 }
 
-/** D-13: 期限切れの提示を expired にする(一覧表示前の状態最新化) */
-export async function expireStaleOffers(): Promise<void> {
+/**
+ * D-10/D-11: その依頼にそのボランティアを提示してよいかを判定する。
+ * 候補検索と同じ除外条件(ブロック中・未承認・非アクティブ・提示済み)を
+ * DB 関数側に集約しているため、書き込み前に必ずここを通す。
+ */
+export async function isOfferableVolunteer(
+  requestId: string,
+  volunteerId: string,
+): Promise<boolean> {
   const admin = createAdminClient();
-  const { error } = await admin.rpc("expire_match_offers");
-  if (error) console.error("提示の期限切れ更新失敗", error.message);
+  const { data, error } = await admin.rpc("is_offerable_volunteer", {
+    p_request_id: requestId,
+    p_volunteer_id: volunteerId,
+  });
+  if (error) {
+    console.error("提示可否の判定失敗", error.message);
+    return false;
+  }
+  return data === true;
+}
+
+/**
+ * D-13: 期限切れの提示を expired にする。戻り値は更新件数。
+ * 全行を対象にした更新のため、画面表示からではなく定期実行から呼ぶ
+ * (POST /api/cron/expire-offers)。
+ */
+export async function expireStaleOffers(): Promise<number> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("expire_match_offers");
+  if (error) {
+    console.error("提示の期限切れ更新失敗", error.message);
+    return 0;
+  }
+  return typeof data === "number" ? data : 0;
+}
+
+/**
+ * D-13: 表示用の提示状態。expired への更新は定期実行のタイミングまで
+ * DB に入らないため、画面では期限を見て導出する(操作側の判定は各アクションが行う)。
+ */
+export function offerDisplayStatus(offer: { status: string; expires_at: string }): string {
+  if (offer.status === "offered" && new Date(offer.expires_at).getTime() < Date.now()) {
+    return "expired";
+  }
+  return offer.status;
 }
 
 /** 承諾期限(48時間後)の ISO 文字列 */

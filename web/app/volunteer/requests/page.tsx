@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, MATCH_OFFER_STATUS_LABEL } from "@/lib/labels";
-import { expireStaleOffers } from "@/lib/matching";
+import { offerDisplayStatus } from "@/lib/matching";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { acceptOffer, declineOffer } from "./actions";
 
@@ -37,9 +37,6 @@ export default async function VolunteerRequestsPage({
   const { error, declined } = await searchParams;
   const profile = await requireRole(["volunteer"]);
 
-  // D-13: 表示前に承諾期限切れを反映する。
-  await expireStaleOffers();
-
   const admin = createAdminClient();
   const { data: offerRows } = await admin
     .from("match_offers")
@@ -50,9 +47,13 @@ export default async function VolunteerRequestsPage({
     .order("offered_at", { ascending: false })
     .limit(50);
 
-  const offers = (offerRows ?? []) as unknown as OfferRow[];
-  const pending = offers.filter((o) => o.status === "offered");
-  const history = offers.filter((o) => o.status !== "offered");
+  // D-13: expired への更新は定期実行で入るため、画面では期限を見て振り分ける。
+  const offers = ((offerRows ?? []) as unknown as OfferRow[]).map((o) => ({
+    ...o,
+    displayStatus: offerDisplayStatus(o),
+  }));
+  const pending = offers.filter((o) => o.displayStatus === "offered");
+  const history = offers.filter((o) => o.displayStatus !== "offered");
   const canRespond = profile.accountStatus !== "pending";
 
   const { data: requests } = await admin
@@ -139,7 +140,7 @@ export default async function VolunteerRequestsPage({
                     {o.volunteer_requests?.subject}（{o.volunteer_requests?.grade}）
                   </span>
                   <span className="text-xs text-gray-500">
-                    {MATCH_OFFER_STATUS_LABEL[o.status] ?? o.status}
+                    {MATCH_OFFER_STATUS_LABEL[o.displayStatus] ?? o.displayStatus}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
