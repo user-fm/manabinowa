@@ -10,8 +10,21 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 /** 文脈解析に渡す直近メッセージの件数 */
 const CONTEXT_SIZE = 10;
-/** 一括検査(API Route)で一度に処理する上限 */
-const BATCH_SIZE = 50;
+/**
+ * 一括検査(API Route)で一度に処理する上限。
+ * 1件ごとに Gemini を直列で呼ぶため、API Route の maxDuration(60秒)に
+ * 収まる件数にしている。残りは次回の定期実行で処理する。
+ */
+const BATCH_SIZE = 10;
+/** 一括検査を打ち切る経過時間。maxDuration に対して余裕を持たせる。 */
+const BATCH_TIME_BUDGET_MS = 45_000;
+
+export type BatchModerationResult = {
+  /** 検査できた件数 */
+  checked: number;
+  /** 時間切れで打ち切ったか(true なら未検査が残っている) */
+  timedOut: boolean;
+};
 
 type MessageRow = {
   id: number;
@@ -61,17 +74,22 @@ export async function moderateChatMessage(messageId: number): Promise<Moderation
 
   // H-04/H-06: 兆候ありかつ「低」を超える場合にアラートを立てる(低は記録のみ)。
   if (result.flagged && level && level !== "low" && session) {
-    // H-06a: 緊急は即時にセッションを止める(進行中・予定のもののみ)
+    // H-06a: 緊急は即時にセッションを止める(進行中・予定のもののみ)。
+    // 停止前の状態は paused_from に残し、H-09 の対応完了時に戻せるようにする。
+    let pausedFrom: string | null = null;
     if (
       level === "urgent" &&
       (session.status === "in_progress" || session.status === "scheduled")
     ) {
-      const { error: pauseError } = await admin
+      const { data: paused, error: pauseError } = await admin
         .from("volunteer_sessions")
         .update({ status: "paused" })
         .eq("id", session.id)
-        .in("status", ["in_progress", "scheduled"]);
+        .in("status", ["in_progress", "scheduled"])
+        .select("id")
+        .maybeSingle();
       if (pauseError) console.error("セッション一時停止失敗", pauseError.message);
+      if (paused) pausedFrom = session.status;
     }
 
     // H-07: アラート登録
@@ -86,6 +104,7 @@ export async function moderateChatMessage(messageId: number): Promise<Moderation
         status: "open",
         reason: result.reason,
         ai_source: result.source,
+        paused_from: pausedFrom,
       })
       .select("id")
       .single();
@@ -98,7 +117,7 @@ export async function moderateChatMessage(messageId: number): Promise<Moderation
         sessionId: session.id,
         level,
         reason: result.reason,
-        paused: level === "urgent",
+        paused: pausedFrom !== null,
       });
     }
   }
@@ -125,9 +144,12 @@ export async function moderateChatMessage(messageId: number): Promise<Moderation
 
 /**
  * H-02: 未検査のメッセージをまとめて検査する(取りこぼしの回収)。
- * 戻り値は検査した件数。
+ * 解析は1件ずつ外部APIを呼ぶため、実行時間の上限を超える前に打ち切る。
+ * 打ち切った分は未検査のまま残るので、次回の定期実行で処理される。
  */
-export async function moderatePendingMessages(limit: number = BATCH_SIZE): Promise<number> {
+export async function moderatePendingMessages(
+  limit: number = BATCH_SIZE,
+): Promise<BatchModerationResult> {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("chat_messages")
@@ -137,16 +159,25 @@ export async function moderatePendingMessages(limit: number = BATCH_SIZE): Promi
     .limit(limit);
   if (error) {
     console.error("未検査メッセージの取得失敗", error.message);
-    return 0;
+    return { checked: 0, timedOut: false };
   }
 
+  const startedAt = Date.now();
+  const rows = data ?? [];
   let checked = 0;
-  for (const row of data ?? []) {
+  for (const [index, row] of rows.entries()) {
     // 解析APIの負荷を避けるため直列に処理する
     const result = await moderateChatMessage(row.id as number);
     if (result) checked += 1;
+    if (Date.now() - startedAt > BATCH_TIME_BUDGET_MS && index < rows.length - 1) {
+      console.warn("一括検査を時間内で打ち切りました", {
+        checked,
+        remaining: rows.length - index - 1,
+      });
+      return { checked, timedOut: true };
+    }
   }
-  return checked;
+  return { checked, timedOut: false };
 }
 
 /** 直近の会話(発言者名つき)を取得する */
@@ -227,7 +258,9 @@ async function notifySupervisors(input: {
     "",
     `重要度: ${LEVEL_TEXT[input.level] ?? input.level}`,
     `検知理由: ${input.reason}`,
-    input.paused ? "緊急のため、該当セッションを一時停止しました。" : "",
+    input.paused
+      ? "緊急のため、該当セッションを一時停止しました。対応済みにすると再開します。"
+      : "",
     "",
     "「安全アラート」画面から内容を確認し、対応をお願いします。",
   ]

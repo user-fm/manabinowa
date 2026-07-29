@@ -26,6 +26,7 @@ export async function enterSession(formData: FormData) {
     redirect(`/sessions/${sessionId}?error=closed`);
   }
   // 中断中のセッションは入室(=再開)させない。安全のため止めた状態を勝手に戻さない。
+  // 解除は管理者がアラートを対応済みにしたとき(H-09)に行う。
   if (session.status === "paused") redirect(`/sessions/${sessionId}?error=paused`);
 
   const admin = createAdminClient();

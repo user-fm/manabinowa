@@ -23,6 +23,9 @@ const ERROR_MESSAGE: Record<string, string> = {
 const SAVED_MESSAGE: Record<string, string> = {
   acknowledged: "確認済みにしました。",
   resolved: "対応済みにしました。",
+  resolved_resumed: "対応済みにしました。一時停止していたセッションを再開しました。",
+  resolved_kept:
+    "対応済みにしました。未対応のアラートまたはブロック申請があるため、セッションは一時停止のままです。",
   block: "ブロックを申請しました。運営の審査をお待ちください。",
 };
 
@@ -32,6 +35,7 @@ type AlertRow = {
   status: string;
   reason: string | null;
   ai_source: string | null;
+  paused_from: string | null;
   created_at: string;
   session_id: string;
   volunteer_id: string;
@@ -60,7 +64,7 @@ export default async function AdminAlertsPage({
   const { data } = await admin
     .from("safety_alerts")
     .select(
-      "id, level, status, reason, ai_source, created_at, session_id, volunteer_id, chat_messages(body, created_at), users!safety_alerts_volunteer_id_fkey(full_name), volunteer_sessions(status)",
+      "id, level, status, reason, ai_source, paused_from, created_at, session_id, volunteer_id, chat_messages(body, created_at), users!safety_alerts_volunteer_id_fkey(full_name), volunteer_sessions(status)",
     )
     .eq("school_id", profile.schoolId)
     .order("created_at", { ascending: false });
@@ -164,8 +168,16 @@ function AlertCard({ alert }: { alert: AlertRow }) {
         </blockquote>
       ) : null}
 
-      {isUrgent ? (
-        <p className="mt-3 text-sm text-red-800">緊急のため、該当セッションを一時停止しました。</p>
+      {alert.paused_from ? (
+        sessionStatus === "paused" ? (
+          <p className="mt-3 text-sm text-red-800">
+            緊急のため、該当セッションを一時停止しています。「対応済みにする」を押すと再開します。
+          </p>
+        ) : (
+          <p className="mt-3 text-sm text-gray-600">
+            緊急のため一時停止しましたが、現在は再開されています。
+          </p>
+        )
       ) : null}
 
       <Link
