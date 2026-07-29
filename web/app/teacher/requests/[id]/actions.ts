@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
-import { offerExpiryFromNow, runMatching } from "@/lib/matching";
+import { isOfferableVolunteer, offerExpiryFromNow, runMatching } from "@/lib/matching";
 import { sendEmailNotification } from "@/lib/notify";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -41,6 +41,13 @@ export async function offerToVolunteer(formData: FormData) {
   const { request, admin } = await requireOwnRequest(requestId);
   if (request.status === "matched" || request.status === "closed") {
     redirect(`/teacher/requests/${requestId}?error=closed`);
+  }
+
+  // volunteerId はフォーム値のため信頼しない。候補検索(D-07)と同じ除外条件で
+  // 提示可否を確認する。これが無いと、ブロック中・未承認・非アクティブの相手にも
+  // 提示できてしまう(admin クライアント経由で RLS も効かないため)。
+  if (!(await isOfferableVolunteer(requestId, volunteerId))) {
+    redirect(`/teacher/requests/${requestId}?error=not_offerable`);
   }
 
   const { error } = await admin.from("match_offers").insert({

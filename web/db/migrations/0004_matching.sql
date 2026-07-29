@@ -1,8 +1,10 @@
 -- まなびのわ 追加DDL: ボランティアマッチング(Dフロー D-07/D-08/D-13)
 -- 目的:
---   1. match_volunteer_candidates() … pgvector 類似検索でボランティア候補を返す(D-07)。
+--   1. is_offerable_volunteer()     … その依頼にその人を提示してよいかを判定する(D-10/D-11)。
+--      候補検索と提示(insert)の両方から呼び、除外条件の定義を1か所に集約する。
+--   2. match_volunteer_candidates() … pgvector 類似検索でボランティア候補を返す(D-07)。
 --      埋め込み未生成の環境では教科・学年の条件一致にフォールバックする。
---   2. expire_match_offers()        … 承諾期限(48時間)を過ぎた提示を expired にする(D-13)。
+--   3. expire_match_offers()        … 承諾期限(48時間)を過ぎた提示を expired にする(D-13)。
 -- 注: volunteer_offers は RLS で本人しか読めないため、教師が候補を見るには
 --     security definer が必要。関数内で「依頼の担当教師本人か、service_role か」を検証する。
 
@@ -11,6 +13,50 @@ begin;
 -- 期限切れ判定の走査を軽くする(未応答の提示だけを見る)
 create index if not exists idx_moff_pending_expiry
   on match_offers(expires_at) where status = 'offered';
+
+-- ---------------------------------------------------------------------
+-- D-10/D-11: 提示可否の判定
+--   候補検索で除外している条件(ブロック中・未承認・非アクティブ・提示済み)は、
+--   提示の書き込み経路でも同じように効かせる必要がある。フォームから来る
+--   volunteer_id は信頼できないため、insert 前にこの関数で検証する。
+-- ---------------------------------------------------------------------
+create or replace function public.is_offerable_volunteer(
+  p_request_id   uuid,
+  p_volunteer_id uuid
+)
+returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select exists (
+    select 1
+    from volunteer_requests r
+    join volunteer_offers vo
+      on vo.volunteer_id = p_volunteer_id
+     and vo.is_active
+    join users u
+      on u.id = vo.volunteer_id
+    where r.id = p_request_id
+      and u.role = 'volunteer'
+      and u.account_status in ('approved', 'active')
+      -- 呼び出し元の検証: 依頼の担当教師本人、または service_role(auth.uid() が null)
+      and (auth.uid() is null or auth.uid() = r.teacher_id)
+      -- 当該校でブロック中のボランティアは提示できない
+      and not exists (
+        select 1 from block_list bl
+        where bl.volunteer_id = vo.volunteer_id
+          and bl.school_id = r.school_id
+          and bl.status = 'approved'
+      )
+      -- 同じ依頼で既に提示済み(承諾/辞退/期限切れ含む)は再提示しない
+      and not exists (
+        select 1 from match_offers mo
+        where mo.request_id = r.id
+          and mo.volunteer_id = vo.volunteer_id
+      )
+  )
+$$;
+
+comment on function public.is_offerable_volunteer is
+  'D-10/D-11 提示可否の判定。候補検索と提示の両方から呼ぶ除外条件の唯一の定義。';
 
 -- ---------------------------------------------------------------------
 -- D-07: 候補検索
@@ -60,24 +106,10 @@ language sql stable security definer set search_path = public, pg_temp as $$
     from volunteer_offers vo
     join users u on u.id = vo.volunteer_id
     cross join req r
+    -- 除外条件(ブロック中・未承認・非アクティブ・提示済み)と呼び出し元の検証は
+    -- is_offerable_volunteer() に集約する。提示経路と判定がずれないようにするため。
     where vo.is_active
-      and u.role = 'volunteer'
-      and u.account_status in ('approved', 'active')
-      -- 呼び出し元の検証: 依頼の担当教師本人、または service_role(auth.uid() が null)
-      and (auth.uid() is null or auth.uid() = r.teacher_id)
-      -- 当該校でブロック中のボランティアは除外
-      and not exists (
-        select 1 from block_list bl
-        where bl.volunteer_id = vo.volunteer_id
-          and bl.school_id = r.school_id
-          and bl.status = 'approved'
-      )
-      -- 同じ依頼で既に提示済み(承諾/辞退/期限切れ含む)は再提示しない
-      and not exists (
-        select 1 from match_offers mo
-        where mo.request_id = p_request_id
-          and mo.volunteer_id = vo.volunteer_id
-      )
+      and is_offerable_volunteer(r.id, vo.volunteer_id)
   ),
   scored as (
     select
@@ -123,7 +155,11 @@ comment on function public.match_volunteer_candidates is
 
 -- ---------------------------------------------------------------------
 -- D-13: 承諾期限(48時間)切れの提示を expired にする。
---   候補一覧や提示一覧の表示前に呼び、状態を最新化する用途。
+--   画面表示から呼ぶと無関係な行まで更新してしまうため、定期実行から呼ぶ。
+--   アプリからは POST /api/cron/expire-offers 経由。pg_cron が使える環境なら
+--   次のように直接スケジュールしてもよい。
+--     select cron.schedule('expire-match-offers', '*/15 * * * *',
+--                          $cron$select public.expire_match_offers()$cron$);
 -- ---------------------------------------------------------------------
 create or replace function public.expire_match_offers()
 returns integer
@@ -144,8 +180,10 @@ $$;
 comment on function public.expire_match_offers is
   'D-13 承諾期限を過ぎた match_offers を expired にする。戻り値は更新件数。';
 
+revoke all on function public.is_offerable_volunteer(uuid, uuid) from public;
 revoke all on function public.match_volunteer_candidates(uuid, vector, float, int) from public;
 revoke all on function public.expire_match_offers() from public;
+grant execute on function public.is_offerable_volunteer(uuid, uuid) to authenticated, service_role;
 grant execute on function public.match_volunteer_candidates(uuid, vector, float, int)
   to authenticated, service_role;
 grant execute on function public.expire_match_offers() to authenticated, service_role;
