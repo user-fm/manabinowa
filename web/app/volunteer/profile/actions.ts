@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { refreshOfferEmbedding } from "@/lib/matching";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -35,7 +36,7 @@ export async function saveVolunteerProfile(formData: FormData) {
   }
 
   // 既存のプロフィール(最新1件)を更新、無ければ新規作成。
-  // search_text / embedding は検索機能の実装時に生成する。
+  // 保存後に search_text / embedding を作り直し、依頼側の検索(D-07)に載せる。
   const { data: existing } = await admin
     .from("volunteer_offers")
     .select("id")
@@ -45,13 +46,24 @@ export async function saveVolunteerProfile(formData: FormData) {
     .maybeSingle();
 
   const values = { subjects, grades, availability, intro, is_active: true };
-  const { error } = existing
-    ? await admin.from("volunteer_offers").update(values).eq("id", existing.id)
-    : await admin.from("volunteer_offers").insert({ volunteer_id: user.id, ...values });
+  const { data: saved, error } = existing
+    ? await admin
+        .from("volunteer_offers")
+        .update(values)
+        .eq("id", existing.id)
+        .select("id")
+        .single()
+    : await admin
+        .from("volunteer_offers")
+        .insert({ volunteer_id: user.id, ...values })
+        .select("id")
+        .single();
 
-  if (error) {
-    console.error("スキル登録失敗", error.message);
+  if (error || !saved) {
+    console.error("スキル登録失敗", error?.message);
     redirect("/volunteer/profile?error=db");
   }
+
+  await refreshOfferEmbedding(saved.id);
   redirect("/volunteer/profile?saved=1");
 }
