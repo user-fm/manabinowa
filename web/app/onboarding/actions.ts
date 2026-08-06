@@ -18,7 +18,6 @@ export async function completeOnboarding(formData: FormData) {
 
   const role = String(formData.get("role") ?? "");
   const fullName = String(formData.get("fullName") ?? "").trim();
-  const schoolId = String(formData.get("schoolId") ?? "");
 
   if (!fullName || !(VALID_ROLES as readonly string[]).includes(role)) {
     redirect("/onboarding?error=invalid");
@@ -31,19 +30,18 @@ export async function completeOnboarding(formData: FormData) {
     redirect("/onboarding?error=role");
   }
 
-  if (SCHOOL_REQUIRED_ROLES.includes(role) && !schoolId) {
-    redirect("/onboarding?error=school");
-  }
-
   const admin = createAdminClient();
 
+  // 所属校はメールドメインの判定結果から決まる(フォームでは選ばない)
+  // board(教育委員会)は特定校に属さないため school_id を持たない
   let finalSchoolId: string | null = null;
   let municipalityCode: string | null = null;
-  if (schoolId && SCHOOL_REQUIRED_ROLES.includes(role)) {
+  if (SCHOOL_REQUIRED_ROLES.includes(role)) {
+    if (classification.kind !== "school") redirect("/onboarding?error=school");
     const { data: school } = await admin
       .from("schools")
       .select("id, municipality_code")
-      .eq("id", schoolId)
+      .eq("id", classification.school.id)
       .maybeSingle();
     if (!school) redirect("/onboarding?error=school");
     finalSchoolId = school.id;

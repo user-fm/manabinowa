@@ -17,7 +17,12 @@ const ROLE_LABELS: Record<AppRole, string> = {
   board: "教育委員会",
 };
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -47,6 +52,18 @@ export default async function OnboardingPage() {
           ? `${classification.school.name} の校内アカウントとして登録します`
           : "個人アカウントとして登録します（ボランティア／地域）"}
       </p>
+
+      {error ? (
+        <p className="mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+          {error === "role"
+            ? "このアカウントでは選べない役割です。"
+            : error === "school"
+              ? "学校の情報を確認できませんでした。"
+              : error === "db"
+                ? "登録に失敗しました。時間を置いて再度お試しください。"
+                : "入力内容を確認してください。"}
+        </p>
+      ) : null}
 
       <form action={completeOnboarding} className="mt-6 space-y-4">
         <Field label="役割" htmlFor="role">
