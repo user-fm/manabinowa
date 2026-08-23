@@ -1,52 +1,65 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { AppHeader } from "@/components/app-header";
+import { getSessionProfile, type Role } from "@/lib/auth";
+import { ROLE_LABEL } from "@/lib/labels";
 
-const ROLE_LABEL: Record<string, string> = {
-  teacher: "教師",
-  student: "生徒",
-  volunteer: "ボランティア",
-  community: "地域住民・団体",
-  admin: "学校管理者",
-  board: "教育委員会",
-};
+type MenuItem = { label: string; href: string; desc: string };
 
-type MenuItem = { label: string; href?: string };
-
-const ROLE_MENU: Record<string, MenuItem[]> = {
+// プロトタイプの各ロールホームのメニュー構成に対応
+const ROLE_MENU: Record<Role, MenuItem[]> = {
   teacher: [
-    { label: "ボランティア依頼を作成", href: "/teacher/requests/new" },
-    { label: "依頼の状況" },
-    { label: "セッション" },
-    { label: "地域からの依頼" },
-    { label: "設定" },
+    {
+      label: "ボランティア依頼を作る",
+      href: "/teacher/requests/new",
+      desc: "教科・学年・内容を指定して募集します",
+    },
+    { label: "依頼の状況", href: "/teacher/requests", desc: "出した依頼と進み具合を確認" },
+    {
+      label: "地域からの依頼",
+      href: "/teacher/community-requests",
+      desc: "地域からの申し出を確認・選定",
+    },
+    { label: "オンライン指導", href: "/teacher/sessions", desc: "予定・実施済みのセッション" },
+    { label: "教材ライブラリ", href: "/teacher/library", desc: "受け入れた地域素材の一覧" },
   ],
-  student: [{ label: "自分のセッション" }, { label: "振り返り" }, { label: "設定" }],
+  student: [
+    { label: "自分のセッション", href: "/student/sessions", desc: "参加する指導の予定" },
+    { label: "振り返り", href: "/student/reflections", desc: "指導後の振り返りを確認" },
+  ],
   volunteer: [
-    { label: "支援プロフィール登録" },
-    { label: "募集中の依頼を探す" },
-    { label: "応募・セッション" },
-    { label: "メッセージ" },
-    { label: "設定" },
+    {
+      label: "スキル登録",
+      href: "/volunteer/profile",
+      desc: "支援できる教科・学年・時間帯を登録",
+    },
+    { label: "学校からの依頼", href: "/volunteer/requests", desc: "募集中の依頼を探す" },
+    { label: "オンライン指導", href: "/volunteer/sessions", desc: "予定・実施済みのセッション" },
   ],
-  community: [{ label: "学校への依頼を作成" }, { label: "依頼の状況" }, { label: "設定" }],
+  community: [
+    {
+      label: "学校への依頼を作る",
+      href: "/community/requests/new",
+      desc: "ポスター制作や行事参加などを依頼",
+    },
+    { label: "送信済みの依頼", href: "/community/requests", desc: "依頼の状況を確認" },
+  ],
   admin: [
-    { label: "安全アラート" },
-    { label: "ブロックリスト申請" },
-    { label: "セッション一覧" },
-    { label: "設定" },
+    { label: "安全アラート", href: "/admin/alerts", desc: "AI監視の検知結果を確認・対応" },
+    { label: "ブロックリスト", href: "/admin/blocks", desc: "申請と審査状況の確認" },
+    { label: "セッション一覧", href: "/admin/sessions", desc: "自校のセッションを確認" },
   ],
-  board: [{ label: "月次監査レポート" }, { label: "統計ダッシュボード" }, { label: "設定" }],
+  board: [
+    { label: "月次監査レポート", href: "/board/reports", desc: "自治体内の活動レポート" },
+    { label: "統計ダッシュボード", href: "/board/stats", desc: "利用状況の統計" },
+  ],
 };
 
 export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getSessionProfile();
 
-  if (!user) {
+  // 未ログイン → ランディング
+  if (!session) {
     return (
       <main className="mx-auto mt-20 max-w-sm px-4 text-center">
         <h1 className="text-2xl font-bold">まなびのわ</h1>
@@ -57,54 +70,38 @@ export default async function Home() {
       </main>
     );
   }
+  if (!session.profile) redirect("/onboarding");
 
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users")
-    .select("role, full_name, account_status")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (!profile) redirect("/onboarding");
-
+  const { profile } = session;
   const menu = ROLE_MENU[profile.role] ?? [];
-  const isPending = profile.account_status === "pending";
+  const isPending = profile.accountStatus === "pending";
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-600">{profile.full_name} さん</span>
-        <form action="/auth/signout" method="post">
-          <button type="submit" className="rounded border px-4 py-2 text-sm">
-            ログアウト
-          </button>
-        </form>
-      </div>
+    <>
+      <AppHeader userName={profile.fullName} role={profile.role} />
+      <main className="mx-auto max-w-3xl px-4 py-8">
+        <p className="text-sm text-gray-500">{ROLE_LABEL[profile.role]}のホーム</p>
+        <h1 className="mt-1 text-2xl font-bold">ようこそ、{profile.fullName} さん</h1>
 
-      <p className="mt-6 text-sm text-gray-500">{ROLE_LABEL[profile.role] ?? profile.role} のホーム</p>
-      <h1 className="mt-1 text-2xl font-bold">ようこそ、{profile.full_name} さん</h1>
+        {isPending ? (
+          <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+            {profile.role === "student"
+              ? "保護者の方の同意を待っています。同意が完了すると各機能が利用できます。"
+              : "現在、運営の審査待ちです。承認されると各機能が利用できます。"}
+          </p>
+        ) : null}
 
-      {isPending ? (
-        <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-          現在、運営の審査待ちです。承認されると各機能が利用できます。
-        </p>
-      ) : null}
-
-      <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {menu.map((item) => (
-          <li key={item.label}>
-            {item.href ? (
+        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {menu.map((item) => (
+            <li key={item.href}>
               <Link href={item.href} className="block rounded border p-4 hover:bg-gray-50">
-                {item.label}
+                <span className="font-medium">{item.label}</span>
+                <p className="mt-1 text-xs text-gray-500">{item.desc}</p>
               </Link>
-            ) : (
-              <div className="flex items-center justify-between rounded border border-dashed p-4 text-gray-400">
-                <span>{item.label}</span>
-                <span className="text-xs">準備中</span>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-    </main>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </>
   );
 }

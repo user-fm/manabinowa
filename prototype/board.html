@@ -39,6 +39,13 @@
 
   <button class="btn" onclick="printReport()">月次レポートを出力</button>
   <p class="hint">月次レポートには、利用状況とアラート対応の記録がまとまります。</p>
+
+  <div class="form-box" id="reportBox" style="display:none; margin-top:16px">
+    <h3 style="margin-top:0">月次レポート（2026年6月）</h3>
+    <ul id="reportList"></ul>
+    <p class="hint">アラートの個別の内容は含まれません（各学校の管理者までの権限です）。</p>
+    <button class="btn btn-small btn-gray" onclick="window.print()">印刷・保存</button>
+  </div>
 </div>
 
 <script src="js/data.js"></script>

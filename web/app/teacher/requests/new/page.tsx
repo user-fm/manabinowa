@@ -1,38 +1,41 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth";
 import { createRequest } from "./actions";
 
-export default async function NewRequestPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+export default async function NewRequestPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const profile = await requireRole(["teacher"]);
+  const { error } = await searchParams;
 
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users")
-    .select("role, school_id")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (!profile) redirect("/onboarding");
-  if (profile.role !== "teacher") redirect("/"); // 教師以外は弾く
-
-  if (!profile.school_id) {
+  if (!profile.schoolId) {
     return (
-      <main className="mx-auto mt-16 max-w-md px-4">
+      <main className="mx-auto max-w-md px-4 py-8">
         <p className="text-sm text-red-600">学校が未設定です。登録をやり直してください。</p>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto mt-12 max-w-md px-4">
-      <h1 className="text-xl font-bold">ボランティア依頼を作成</h1>
+    <main className="mx-auto max-w-md px-4 py-8">
+      <Link href="/teacher/requests" className="text-sm text-gray-500 hover:text-gray-900">
+        ← 依頼の状況へ戻る
+      </Link>
+      <h1 className="mt-3 text-xl font-bold">ボランティア依頼を作る</h1>
+
+      {error ? (
+        <p className="mt-3 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+          {error === "invalid"
+            ? "入力内容を確認してください。"
+            : "保存に失敗しました。時間をおいて再度お試しください。"}
+        </p>
+      ) : null}
+
       <form action={createRequest} className="mt-6 space-y-4">
         <Field label="教科" htmlFor="subject">
           <Input id="subject" name="subject" required placeholder="例: 数学" />

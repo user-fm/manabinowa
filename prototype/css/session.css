@@ -98,3 +98,60 @@
   font-size: 13px;
 }
 .chat-input .btn { margin-top: 0; }
+
+/* 緊急検知でセッションを止めたときの表示 */
+.pause-cover {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(32, 48, 42, 0.93);
+  border-radius: 8px;
+  color: #f3d7ba;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 2;
+}
+.pause-cover small { color: #b8cfc0; }
+
+/* ホワイトボード */
+.wb-box {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.wb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.wb-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+.wb-tools button {
+  font-size: 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  margin-left: 4px;
+  font-family: inherit;
+}
+.wb-tools button.on {
+  border-color: var(--green);
+  background: var(--green-bg);
+}
+#wb {
+  display: block;
+  width: 100%;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  cursor: crosshair;
+  touch-action: none;
+}

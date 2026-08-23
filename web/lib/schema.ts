@@ -112,6 +112,8 @@ export const schools = pgTable("schools", {
     .references(() => municipalities.code, { onDelete: "restrict" }),
   workspaceDomain: text("workspace_domain").unique(),
   address: text("address"),
+  // 録画対応校フラグ(E-08 の判定元)。DDL は 0001_school_recording_enabled.sql。
+  recordingEnabled: boolean("recording_enabled").default(false).notNull(),
   createdAt: timestamp("created_at", tz).defaultNow().notNull(),
 });
 
@@ -217,6 +219,7 @@ export const volunteerSessions = pgTable("volunteer_sessions", {
   isFirst: boolean("is_first").default(false).notNull(),
   recordingRequired: boolean("recording_required").default(false).notNull(),
   recordingUrl: text("recording_url"),
+  remindereSentAt: timestamp("reminder_sent_at", tz),
   teacherReflection: text("teacher_reflection"),
   volunteerReflection: text("volunteer_reflection"),
   aiSummary: text("ai_summary"),

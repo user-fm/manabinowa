@@ -3,11 +3,12 @@ initPage();
 
 const accountNames = {
   teacher: '田中先生',
-  student: 'みなと ひかり',
+  student: '春 太郎',
   volunteer: '山本 さくら',
   community: '鈴木 大輔',
   admin: '学校管理者',
-  board: '教育委員会 ご担当者'
+  board: '教育委員会 ご担当者',
+  operator: 'まなびのわ事務局'
 };
 
 document.getElementById('acctName').textContent = accountNames[state.role] || '-';
