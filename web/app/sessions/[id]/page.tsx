@@ -9,6 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   endSession,
   enterSession,
+  saveMeetUrl,
   saveRecordingUrl,
   saveReflection,
   saveVolunteerReview,
@@ -32,6 +33,7 @@ const SAVED_MESSAGE: Record<string, string> = {
   reflection: "振り返りを保存しました。",
   recording: "録画リンクを保存しました。",
   review: "評価を登録しました。",
+  meet: "会議リンクを保存しました。",
 };
 
 export default async function SessionDetailPage({
@@ -64,11 +66,9 @@ export default async function SessionDetailPage({
   // 表示名は当事者ぶんと過去の送信者ぶんをまとめて引く。
   const senderIds = Array.from(
     new Set(
-      [
-        session.teacher_id,
-        session.volunteer_id,
-        ...messages.map((m) => m.sender_id),
-      ].filter((v): v is string => Boolean(v)),
+      [session.teacher_id, session.volunteer_id, ...messages.map((m) => m.sender_id)].filter(
+        (v): v is string => Boolean(v),
+      ),
     ),
   );
   const { data: userRows } = await admin.from("users").select("id, full_name").in("id", senderIds);
@@ -133,8 +133,27 @@ export default async function SessionDetailPage({
             Meet に参加する
           </a>
         ) : (
-          <p className="mt-2 text-sm text-gray-500">会議リンクは未設定です（自動発行は準備中）。</p>
+          <p className="mt-2 text-sm text-gray-500">会議リンクは未設定です。</p>
         )}
+
+        {viewerRole === "teacher" && !isClosed ? (
+          <form action={saveMeetUrl} className="mt-3 flex flex-wrap items-end gap-2">
+            <input type="hidden" name="sessionId" value={session.id} />
+            <label className="flex-1">
+              <span className="text-xs text-gray-500">Meet のリンク</span>
+              <input
+                name="meetUrl"
+                type="url"
+                defaultValue={session.meet_url ?? ""}
+                placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                className="mt-1 w-full rounded border p-2 text-sm"
+              />
+            </label>
+            <Button type="submit" variant="outline">
+              保存
+            </Button>
+          </form>
+        ) : null}
 
         {canOperate && !isClosed ? (
           <div className="mt-4 flex flex-wrap gap-2">
@@ -173,17 +192,13 @@ export default async function SessionDetailPage({
           <div>
             <h3 className="text-xs font-medium text-gray-500">教師</h3>
             <p className="mt-1 whitespace-pre-wrap text-sm">
-              {session.teacher_reflection ?? (
-                <span className="text-gray-400">未入力です。</span>
-              )}
+              {session.teacher_reflection ?? <span className="text-gray-400">未入力です。</span>}
             </p>
           </div>
           <div>
             <h3 className="text-xs font-medium text-gray-500">ボランティア</h3>
             <p className="mt-1 whitespace-pre-wrap text-sm">
-              {session.volunteer_reflection ?? (
-                <span className="text-gray-400">未入力です。</span>
-              )}
+              {session.volunteer_reflection ?? <span className="text-gray-400">未入力です。</span>}
             </p>
           </div>
         </div>

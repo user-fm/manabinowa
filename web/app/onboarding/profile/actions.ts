@@ -1,7 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { classifyUserByEmail, isRoleAllowedFor } from "@/lib/auth/classify-user";
+import { sendEmailNotification } from "@/lib/notify";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -55,9 +57,11 @@ export async function completeOnboarding(formData: FormData) {
     finalSchoolId = school.id;
     municipalityCode = school.municipality_code;
   }
-
-  // B-15/B-16: volunteer / community は運営審査を経るまで pending。
-  const accountStatus = role === "volunteer" || role === "community" ? "pending" : "active";
+  
+  // B-15/B-16: volunteer/community は運営審査、生徒は保護者同意(K-13)が
+  // 完了するまで pending。教師・管理者・教委は即時 active。
+  const accountStatus =
+    role === "teacher" || role === "admin" || role === "board" ? "active" : "pending";
 
   const { error: insertError } = await admin.from("users").insert({
     id: user.id,
@@ -76,13 +80,35 @@ export async function completeOnboarding(formData: FormData) {
   // B-11/B-12: 生徒は保護者同意レコードを作成。保護者メールは consent_items に
   // 保持し、同意依頼メールの送信は K-11〜15 で実装する。
   if (role === "student") {
+    const token = crypto.randomUUID();
     const { error: consentError } = await admin.from("consent_records").insert({
       student_id: user.id,
-      token: crypto.randomUUID(),
+      token,
       status: "pending",
       consent_items: { parent_email: parentEmail },
     });
-    if (consentError) console.error("同意レコード作成失敗", consentError.message);
+    if (consentError) {
+      console.error("同意レコード作成失敗", consentError.message);
+    } else {
+      const h = await headers();
+      const proto = h.get("x-forwarded-proto") ?? "http";
+      const host = h.get("host") ?? "localhost:3000";
+      await sendEmailNotification({
+        userId: user.id,
+        email: parentEmail,
+        category: "consent",
+        subject: "お子さまのサービス利用に関する同意のお願い",
+        body: [
+          `${fullName} さんが生徒として登録しました。`,
+          "サービスの利用には保護者の方の同意が必要です。",
+          "",
+          "以下のリンクから内容をご確認のうえ、同意の手続をお願いします。",
+          `${proto}://${host}/consent/${token}`,
+          "",
+          "このメールに心当たりがない場合は破棄してください。",
+        ].join("\n"),
+      });
+    }
   }
 
   await admin.auth.admin.updateUserById(user.id, {
