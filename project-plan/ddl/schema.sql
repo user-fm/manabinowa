@@ -33,7 +33,7 @@ create type inquiry_status       as enum ('open','in_progress','answered','close
 create type alert_level          as enum ('low','medium','high','urgent');
 create type alert_status         as enum ('open','acknowledged','resolved');
 create type notification_channel as enum ('email','push');
-create type notification_category as enum ('matching','session_reminder','community','safety_alert','message');
+create type notification_category as enum ('matching','session_reminder','community','safety_alert','message','consent');
 create type notification_status  as enum ('sent','failed','retrying');
 create type actor_type           as enum ('user','operator','parent','system','ai');
 
@@ -55,6 +55,8 @@ create table schools (
   municipality_code text not null references municipalities(code) on delete restrict,
   workspace_domain  text unique,
   address           text,
+  -- 録画可否は Workspace エディション依存。E-08「初回指導 かつ 録画対応校」の判定に使用
+  recording_enabled boolean not null default false,
   created_at        timestamptz not null default now()
 );
 
@@ -139,6 +141,7 @@ create table volunteer_sessions (
   teacher_reflection  text,
   volunteer_reflection text,
   ai_summary          text,
+  reminder_sent_at    timestamptz,           -- E-05 リマインド送信済み(null=未送信)
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );
@@ -623,5 +626,35 @@ end;
 $$;
 create trigger trg_vrev_stats after insert on volunteer_reviews
   for each row execute function update_volunteer_stats();
+
+-- =====================================================================
+-- 8. Realtime(セッション内チャットの購読 / E-10)
+--    Supabase Realtime は publication `supabase_realtime` を購読する。
+--    受信可否は chat_messages の RLS に従う(= セッション参加者のみ)。
+-- =====================================================================
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (
+       select 1 from pg_publication_tables
+       where pubname = 'supabase_realtime'
+         and schemaname = 'public'
+         and tablename = 'chat_messages'
+     )
+  then
+    alter publication supabase_realtime add table chat_messages;
+  end if;
+end $$;
+
+-- =====================================================================
+-- 9. マッチング関数(Dフロー D-07/D-11/D-13)
+--    is_offerable_volunteer()     … 提示可否の共通判定。ブロック中・未承認・
+--                                   非アクティブ・提示済みを除外する。候補検索と
+--                                   提示の両方から呼び、条件の食い違いを防ぐ
+--    match_volunteer_candidates() … pgvector 類似検索で候補を返す。埋め込み未生成の
+--                                   環境では教科・学年の条件一致にフォールバックする
+--    expire_match_offers()        … 承諾期限(48時間)を過ぎた提示を expired にする
+--    ※ 定義本体は web/db/migrations/0004_matching.sql を参照
+-- =====================================================================
 
 commit;
