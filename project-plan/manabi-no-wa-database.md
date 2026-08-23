@@ -112,7 +112,7 @@ operators 1──* block_list(decided_by) / inquiries(handled_by)
 | alert_level | low / medium / high / urgent(低/中/高/緊急) |
 | alert_status | open / acknowledged / resolved(アラートの対応状態) |
 | notification_channel | email / push |
-| notification_category | matching / session_reminder / community / safety_alert / message |
+| notification_category | matching / session_reminder / community / safety_alert / message / consent |
 | notification_status | sent / failed / retrying |
 | actor_type | user / operator / parent / system / ai(監査・イベントの主体種別) |
 
@@ -147,6 +147,7 @@ operators 1──* block_list(decided_by) / inquiries(handled_by)
 | municipality_code | text | FK→municipalities(code), not null(都道府県は municipalities 側に保持) |
 | workspace_domain | text | unique(例: `minato.ed.jp`。B-07 ドメイン判定) |
 | address | text | |
+| recording_enabled | boolean | not null default false(録画対応校か。Workspaceエディション依存。E-08 の判定に使用) |
 | created_at | timestamptz | default now() |
 
 - 索引: `unique(workspace_domain)` / `index(municipality_code)`
@@ -262,6 +263,7 @@ operators 1──* block_list(decided_by) / inquiries(handled_by)
 | teacher_reflection | text | E-13 |
 | volunteer_reflection | text | E-13 |
 | ai_summary | text | E-14(Vertex AI) |
+| reminder_sent_at | timestamptz | E-05 リマインド送信日時(null=未送信。二重送信の防止に使用) |
 | created_at / updated_at | timestamptz | |
 
 - 索引: `index(teacher_id)` / `index(volunteer_id)` / `index(school_id)` / `index(status)` / `index(scheduled_at)`
@@ -464,7 +466,7 @@ operators 1──* block_list(decided_by) / inquiries(handled_by)
 | 列 | 型 | 制約 |
 |---|---|---|
 | user_id | uuid | FK→users(id) on delete cascade |
-| category | notification_category | (matching/session_reminder/community/safety_alert/message) |
+| category | notification_category | (matching/session_reminder/community/safety_alert/message/consent) |
 | enabled | boolean | not null default true |
 | PK | | (user_id, category) |
 
