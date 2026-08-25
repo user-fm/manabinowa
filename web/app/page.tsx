@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/ui/app-header";
 import { getSessionProfile, type Role } from "@/lib/auth";
 import { ROLE_LABEL } from "@/lib/labels";
 
@@ -79,9 +79,9 @@ export default async function Home() {
   return (
     <>
       <AppHeader userName={profile.fullName} role={profile.role} />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-sm text-gray-500">{ROLE_LABEL[profile.role]}のホーム</p>
-        <h1 className="mt-1 text-2xl font-bold">ようこそ、{profile.fullName} さん</h1>
+      <main className="mx-auto max-w-[960px] px-5 py-[25px]">
+        <p className="mt-6 text-sm text-gray-500">{ROLE_LABEL[profile.role]}のホーム</p>
+        <h1 className="mt-1 w-full text-2xl font-bold">ようこそ、{profile.fullName} さん</h1>
 
         {isPending ? (
           <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
@@ -91,12 +91,12 @@ export default async function Home() {
           </p>
         ) : null}
 
-        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <ul className="mt-6 grid gap-5 sm:grid-cols-3">
           {menu.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className="block rounded border p-4 hover:bg-gray-50">
-                <span className="font-medium">{item.label}</span>
-                <p className="mt-1 text-xs text-gray-500">{item.desc}</p>
+              <Link href={item.href} className="block min-h-[140px] rounded-lg border border-gray-300 bg-white p-6 transition-all hover:border-[#155c38] hover:shadow-md">
+                <span className="text-lg font-medium">{item.label}</span>
+                <p className="mt-2 text-sm text-gray-500">{item.desc}</p>
               </Link>
             </li>
           ))}

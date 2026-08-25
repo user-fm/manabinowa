@@ -36,7 +36,7 @@ export default async function AdminSessionsPage() {
               <li key={s.id}>
                 <Link
                   href={`/sessions/${s.id}`}
-                  className="block rounded border p-4 hover:bg-gray-50"
+                  className="block p-4 rounded-lg border border-gray-300 bg-white p-6 transition-all hover:border-[#155c38] hover:shadow-md"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium">
