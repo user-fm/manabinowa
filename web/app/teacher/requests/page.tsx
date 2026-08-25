@@ -19,7 +19,7 @@ export default async function TeacherRequestsPage() {
         <h1 className="text-xl font-bold">依頼の状況</h1>
         <Link
           href="/teacher/requests/new"
-          className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50"
+          className="rounded border px-3 py-1.5 text-sm bg-[#155c38] text-white hover:bg-[#124c2f]"
         >
           新しく依頼する
         </Link>
@@ -35,7 +35,7 @@ export default async function TeacherRequestsPage() {
             <li key={r.id}>
               <Link
                 href={`/teacher/requests/${r.id}`}
-                className="block rounded border p-4 hover:bg-gray-50"
+                className="block p-4 rounded-lg border border-gray-300 bg-white p-6 transition-all hover:border-[#155c38] hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">

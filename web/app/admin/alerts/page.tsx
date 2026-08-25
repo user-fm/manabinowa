@@ -109,7 +109,7 @@ export default async function AdminAlertsPage({
           <h2 className="font-medium">対応済みのアラート</h2>
           <ul className="mt-3 space-y-2">
             {resolved.map((a) => (
-              <li key={a.id} className="rounded border p-3 text-sm">
+              <li key={a.id} className="p-3 text-sm rounded-lg border border-gray-300 bg-white">
                 <div className="flex items-center justify-between">
                   <span>
                     {ALERT_LEVEL_LABEL[a.level] ?? a.level}／{a.users?.full_name ?? "（不明）"}
