@@ -10,7 +10,8 @@ export type NotificationCategory =
   | "session_reminder"
   | "community"
   | "safety_alert"
-  | "message";
+  | "message"
+  | "consent";
 
 export type NotifyInput = {
   /** 宛先ユーザー(users.id)。ログの紐付けに使う */

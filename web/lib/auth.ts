@@ -63,5 +63,9 @@ export async function requireProfile(): Promise<Profile> {
 export async function requireRole(roles: Role[]): Promise<Profile> {
   const profile = await requireProfile();
   if (!roles.includes(profile.role)) redirect("/");
+
+  if (profile.role === "student" && profile.accountStatus !== "active") {
+    redirect("/onboarding/student-check");
+  }
   return profile;
 }

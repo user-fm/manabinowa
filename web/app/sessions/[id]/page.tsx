@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import {
   endSession,
   enterSession,
+  saveMeetUrl,
   saveRecordingUrl,
   saveReflection,
   saveVolunteerReview,
@@ -26,7 +27,7 @@ const ERROR_MESSAGE: Record<string, string> = {
   not_running: "実施中のセッションのみ終了できます。",
   empty_message: "メッセージを入力してください。",
   too_long: "メッセージが長すぎます（2000文字以内）。",
-  invalid_url: "録画リンクは https:// で始まる URL を入力してください。",
+  invalid_url: "リンクは https:// で始まる URL を入力してください。",
   invalid_rating: "評価は1〜5から選んでください。",
   db: "処理に失敗しました。時間をおいて再度お試しください。",
 };
@@ -35,6 +36,7 @@ const SAVED_MESSAGE: Record<string, string> = {
   reflection: "振り返りを保存しました。",
   recording: "録画リンクを保存しました。",
   review: "評価を登録しました。",
+  meet: "会議リンクを保存しました。",
 };
 
 // 見出し横のステータスバッジ。状態が一目で分かるよう色で区別する。
@@ -162,6 +164,43 @@ export default async function SessionDetailPage({
       {/* 左=操作するもの(会議・チャット・振り返り)、右=参照するもの(依頼内容・録画)。 */}
       <div className="mt-6 grid gap-5 lg:grid-cols-3 lg:items-start">
         <div className="space-y-5 lg:col-span-2">
+          <section className={cn(cardClass, "p-4")}>
+            <h2 className="text-sm font-medium text-gray-500">ビデオ会議</h2>
+            {session.meet_url ? (
+              <a
+                href={session.meet_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm text-blue-700 underline"
+              >
+                Meet に参加する
+              </a>
+            ) : (
+              <p className="mt-2 text-sm text-gray-500">会議リンクは未設定です。</p>
+            )}
+
+            {/* E-04: Meet の URL は教師が手動で登録する(Calendar API 連携は今回対象外)。 */}
+            {viewerRole === "teacher" && !isClosed ? (
+              <form action={saveMeetUrl} className="mt-3 flex flex-wrap items-end gap-2">
+                <input type="hidden" name="sessionId" value={session.id} />
+                <label className="flex-1" htmlFor="meetUrl">
+                  <span className="text-xs text-gray-500">Meet のリンク</span>
+                  <Input
+                    id="meetUrl"
+                    name="meetUrl"
+                    type="url"
+                    defaultValue={session.meet_url ?? ""}
+                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                    className="text-sm"
+                  />
+                </label>
+                <Button type="submit" variant="outline">
+                  保存
+                </Button>
+              </form>
+            ) : null}
+          </section>
+
           <SessionChat
             sessionId={session.id}
             currentUserId={profile.id}

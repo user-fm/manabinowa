@@ -219,6 +219,7 @@ export const volunteerSessions = pgTable("volunteer_sessions", {
   isFirst: boolean("is_first").default(false).notNull(),
   recordingRequired: boolean("recording_required").default(false).notNull(),
   recordingUrl: text("recording_url"),
+  remindereSentAt: timestamp("reminder_sent_at", tz),
   teacherReflection: text("teacher_reflection"),
   volunteerReflection: text("volunteer_reflection"),
   aiSummary: text("ai_summary"),

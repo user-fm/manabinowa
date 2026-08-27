@@ -88,7 +88,9 @@ export default async function Home() {
 
         {isPending ? (
           <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-            現在、運営の審査待ちです。承認されると各機能が利用できます。
+            {profile.role === "student"
+              ? "保護者の方の同意を待っています。同意が完了すると各機能が利用できます。"
+              : "現在、運営の審査待ちです。承認されると各機能が利用できます。"}
           </p>
         ) : null}
 
