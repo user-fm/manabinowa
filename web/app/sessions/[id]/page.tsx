@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { requireProfile } from "@/lib/auth";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
 import { requireSessionAccess } from "@/lib/sessions";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 import {
   endSession,
   enterSession,
@@ -24,7 +27,7 @@ const ERROR_MESSAGE: Record<string, string> = {
   not_running: "実施中のセッションのみ終了できます。",
   empty_message: "メッセージを入力してください。",
   too_long: "メッセージが長すぎます（2000文字以内）。",
-  invalid_url: "録画リンクは https:// で始まる URL を入力してください。",
+  invalid_url: "リンクは https:// で始まる URL を入力してください。",
   invalid_rating: "評価は1〜5から選んでください。",
   db: "処理に失敗しました。時間をおいて再度お試しください。",
 };
@@ -34,6 +37,15 @@ const SAVED_MESSAGE: Record<string, string> = {
   recording: "録画リンクを保存しました。",
   review: "評価を登録しました。",
   meet: "会議リンクを保存しました。",
+};
+
+// 見出し横のステータスバッジ。状態が一目で分かるよう色で区別する。
+const STATUS_BADGE: Record<string, string> = {
+  scheduled: "border-gray-300 bg-white text-gray-600",
+  in_progress: "border-emerald-300 bg-emerald-50 text-emerald-800",
+  paused: "border-amber-300 bg-amber-50 text-amber-800",
+  completed: "border-gray-300 bg-gray-100 text-gray-600",
+  cancelled: "border-red-300 bg-red-50 text-red-700",
 };
 
 export default async function SessionDetailPage({
@@ -89,217 +101,236 @@ export default async function SessionDetailPage({
   const myReflection = isTeacher ? session.teacher_reflection : session.volunteer_reflection;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold">
-        オンライン指導：{req?.subject ?? "—"}（{req?.grade ?? "—"}）
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        日時: {fmtDateTime(session.scheduled_at)} ／ 状態:{" "}
-        {SESSION_STATUS_LABEL[session.status] ?? session.status}
-      </p>
-
-      {error ? (
-        <p className="mt-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {ERROR_MESSAGE[error] ?? "エラーが発生しました。"}
-        </p>
-      ) : null}
-
-      {saved && SAVED_MESSAGE[saved] ? (
-        <p className="mt-4 rounded border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
-          {SAVED_MESSAGE[saved]}
-        </p>
-      ) : null}
-
-      {session.recording_required ? (
-        <p className="mt-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          このセッションは録画対象です（初回・録画対応校）。開始時に Meet の録画を開始してください。
-        </p>
-      ) : null}
-
-      <section className="mt-6 rounded border p-4">
-        <h2 className="text-sm font-medium text-gray-500">内容</h2>
-        <p className="mt-2 whitespace-pre-wrap text-sm">{req?.detail ?? "—"}</p>
-      </section>
-
-      <section className="mt-4 rounded border p-4">
-        <h2 className="text-sm font-medium text-gray-500">ビデオ会議</h2>
-        {session.meet_url ? (
-          <a
-            href={session.meet_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 inline-block text-sm text-blue-700 underline"
+    <main className="mx-auto max-w-6xl px-4 py-8">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold">
+            オンライン指導：{req?.subject ?? "—"}（{req?.grade ?? "—"}）
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">日時: {fmtDateTime(session.scheduled_at)}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <span
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1 text-xs font-medium",
+              STATUS_BADGE[session.status] ?? "border-gray-300 bg-white text-gray-600",
+            )}
           >
-            Meet に参加する
-          </a>
-        ) : (
-          <p className="mt-2 text-sm text-gray-500">会議リンクは未設定です。</p>
-        )}
+            {SESSION_STATUS_LABEL[session.status] ?? session.status}
+          </span>
+          {/* 入室はチャットの参加者行(session_participants)を作る起点でもある。 */}
+          {canOperate && !isClosed ? (
+            <>
+              {!isRunning ? (
+                <form action={enterSession}>
+                  <input type="hidden" name="sessionId" value={session.id} />
+                  <Button type="submit">入室して開始する</Button>
+                </form>
+              ) : null}
+              {isRunning && viewerRole === "teacher" ? (
+                <form action={endSession}>
+                  <input type="hidden" name="sessionId" value={session.id} />
+                  <Button type="submit" variant="outline">
+                    セッションを終了する
+                  </Button>
+                </form>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      </div>
 
-        {viewerRole === "teacher" && !isClosed ? (
-          <form action={saveMeetUrl} className="mt-3 flex flex-wrap items-end gap-2">
-            <input type="hidden" name="sessionId" value={session.id} />
-            <label className="flex-1">
-              <span className="text-xs text-gray-500">Meet のリンク</span>
-              <input
-                name="meetUrl"
-                type="url"
-                defaultValue={session.meet_url ?? ""}
-                placeholder="https://meet.google.com/xxx-xxxx-xxx"
-                className="mt-1 w-full rounded border p-2 text-sm"
-              />
-            </label>
-            <Button type="submit" variant="outline">
-              保存
-            </Button>
-          </form>
+      <div className="mt-4 space-y-3 empty:mt-0">
+        {error ? (
+          <p className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {ERROR_MESSAGE[error] ?? "エラーが発生しました。"}
+          </p>
         ) : null}
 
-        {canOperate && !isClosed ? (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {!isRunning ? (
-              <form action={enterSession}>
+        {saved && SAVED_MESSAGE[saved] ? (
+          <p className="rounded border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
+            {SAVED_MESSAGE[saved]}
+          </p>
+        ) : null}
+
+        {session.recording_required ? (
+          <p className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            このセッションは録画対象です（初回・録画対応校）。開始時に Meet
+            の録画を開始してください。
+          </p>
+        ) : null}
+      </div>
+
+      {/* 左=操作するもの(会議・チャット・振り返り)、右=参照するもの(依頼内容・録画)。 */}
+      <div className="mt-6 grid gap-5 lg:grid-cols-3 lg:items-start">
+        <div className="space-y-5 lg:col-span-2">
+          <section className={cn(cardClass, "p-4")}>
+            <h2 className="text-sm font-medium text-gray-500">ビデオ会議</h2>
+            {session.meet_url ? (
+              <a
+                href={session.meet_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm text-blue-700 underline"
+              >
+                Meet に参加する
+              </a>
+            ) : (
+              <p className="mt-2 text-sm text-gray-500">会議リンクは未設定です。</p>
+            )}
+
+            {/* E-04: Meet の URL は教師が手動で登録する(Calendar API 連携は今回対象外)。 */}
+            {viewerRole === "teacher" && !isClosed ? (
+              <form action={saveMeetUrl} className="mt-3 flex flex-wrap items-end gap-2">
                 <input type="hidden" name="sessionId" value={session.id} />
-                <Button type="submit">入室して開始する</Button>
-              </form>
-            ) : null}
-            {isRunning && viewerRole === "teacher" ? (
-              <form action={endSession}>
-                <input type="hidden" name="sessionId" value={session.id} />
+                <label className="flex-1" htmlFor="meetUrl">
+                  <span className="text-xs text-gray-500">Meet のリンク</span>
+                  <Input
+                    id="meetUrl"
+                    name="meetUrl"
+                    type="url"
+                    defaultValue={session.meet_url ?? ""}
+                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                    className="text-sm"
+                  />
+                </label>
                 <Button type="submit" variant="outline">
-                  セッションを終了する
+                  保存
                 </Button>
               </form>
             ) : null}
-          </div>
-        ) : null}
-      </section>
+          </section>
 
-      <div className="mt-4">
-        <SessionChat
-          sessionId={session.id}
-          currentUserId={profile.id}
-          initialMessages={messages}
-          senderNames={senderNames}
-          canPost={canOperate && !isClosed}
-        />
-      </div>
+          <SessionChat
+            sessionId={session.id}
+            currentUserId={profile.id}
+            initialMessages={messages}
+            senderNames={senderNames}
+            canPost={canOperate && !isClosed}
+          />
 
-      <section className="mt-4 rounded border p-4">
-        <h2 className="text-sm font-medium text-gray-500">振り返り</h2>
+          <section className={cn(cardClass, "p-4")}>
+            <h2 className="text-sm font-medium text-gray-500">振り返り</h2>
 
-        <div className="mt-3 space-y-3">
-          <div>
-            <h3 className="text-xs font-medium text-gray-500">教師</h3>
-            <p className="mt-1 whitespace-pre-wrap text-sm">
-              {session.teacher_reflection ?? <span className="text-gray-400">未入力です。</span>}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xs font-medium text-gray-500">ボランティア</h3>
-            <p className="mt-1 whitespace-pre-wrap text-sm">
-              {session.volunteer_reflection ?? <span className="text-gray-400">未入力です。</span>}
-            </p>
-          </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div>
+                <h3 className="text-xs font-medium text-gray-500">教師</h3>
+                <p className="mt-1 whitespace-pre-wrap text-sm">
+                  {session.teacher_reflection ?? (
+                    <span className="text-gray-400">未入力です。</span>
+                  )}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-xs font-medium text-gray-500">ボランティア</h3>
+                <p className="mt-1 whitespace-pre-wrap text-sm">
+                  {session.volunteer_reflection ?? (
+                    <span className="text-gray-400">未入力です。</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {canReflect ? (
+              <form action={saveReflection} className="mt-4 border-t pt-4">
+                <input type="hidden" name="sessionId" value={session.id} />
+                <Field label="自分の振り返り" htmlFor="reflection">
+                  <Textarea
+                    id="reflection"
+                    name="reflection"
+                    rows={4}
+                    defaultValue={myReflection ?? ""}
+                    placeholder="うまくいった点や次回に向けた気づきを書いてください。"
+                  />
+                </Field>
+                <Button type="submit" className="mt-2">
+                  振り返りを保存する
+                </Button>
+              </form>
+            ) : null}
+
+            <div className="mt-4 border-t pt-3">
+              <h3 className="text-xs font-medium text-gray-500">AI要約</h3>
+              <p className="mt-1 whitespace-pre-wrap text-sm">
+                {session.ai_summary ?? (
+                  <span className="text-gray-400">AI要約は未生成です（自動生成は準備中）。</span>
+                )}
+              </p>
+            </div>
+          </section>
+
+          {isTeacher && session.status === "completed" ? (
+            <section className={cn(cardClass, "p-4")}>
+              <h2 className="text-sm font-medium text-gray-500">ボランティアの評価</h2>
+              <form action={saveVolunteerReview} className="mt-3 space-y-3">
+                <input type="hidden" name="sessionId" value={session.id} />
+                <Field label="評価" htmlFor="rating">
+                  <Select id="rating" name="rating" defaultValue={String(review?.rating ?? 5)}>
+                    <option value="5">5（とても良かった）</option>
+                    <option value="4">4（良かった）</option>
+                    <option value="3">3（ふつう）</option>
+                    <option value="2">2（あまり良くなかった）</option>
+                    <option value="1">1（良くなかった）</option>
+                  </Select>
+                </Field>
+                <Field label="コメント" htmlFor="comment" hint="(任意)">
+                  <Textarea
+                    id="comment"
+                    name="comment"
+                    rows={3}
+                    defaultValue={review?.comment ?? ""}
+                  />
+                </Field>
+                <Button type="submit">{review ? "評価を更新する" : "評価を登録する"}</Button>
+              </form>
+            </section>
+          ) : null}
         </div>
 
-        {canReflect ? (
-          <form action={saveReflection} className="mt-4">
-            <input type="hidden" name="sessionId" value={session.id} />
-            <Field label="自分の振り返り" htmlFor="reflection">
-              <textarea
-                id="reflection"
-                name="reflection"
-                rows={4}
-                defaultValue={myReflection ?? ""}
-                className="mt-1 w-full rounded border p-2"
-                placeholder="うまくいった点や次回に向けた気づきを書いてください。"
-              />
-            </Field>
-            <Button type="submit" className="mt-2">
-              振り返りを保存する
-            </Button>
-          </form>
-        ) : null}
+        <aside className="space-y-5 lg:sticky lg:top-20">
+          <section className={cn(cardClass, "p-4")}>
+            <h2 className="text-sm font-medium text-gray-500">内容</h2>
+            <p className="mt-2 whitespace-pre-wrap text-sm">{req?.detail ?? "—"}</p>
+          </section>
 
-        <div className="mt-4 border-t pt-3">
-          <h3 className="text-xs font-medium text-gray-500">AI要約</h3>
-          <p className="mt-1 whitespace-pre-wrap text-sm">
-            {session.ai_summary ?? (
-              <span className="text-gray-400">AI要約は未生成です（自動生成は準備中）。</span>
+          <section className={cn(cardClass, "p-4")}>
+            <h2 className="text-sm font-medium text-gray-500">録画</h2>
+            {session.recording_url ? (
+              <a
+                href={session.recording_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm text-blue-700 underline"
+              >
+                録画を見る
+              </a>
+            ) : (
+              <p className="mt-2 text-sm text-gray-500">
+                {session.recording_required
+                  ? "録画リンクは未登録です。セッション終了後に教師が登録してください。"
+                  : "このセッションは録画対象ではありません。"}
+              </p>
             )}
-          </p>
-        </div>
-      </section>
 
-      <section className="mt-4 rounded border p-4">
-        <h2 className="text-sm font-medium text-gray-500">録画</h2>
-        {session.recording_url ? (
-          <a
-            href={session.recording_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 inline-block text-sm text-blue-700 underline"
-          >
-            録画を見る
-          </a>
-        ) : (
-          <p className="mt-2 text-sm text-gray-500">
-            {session.recording_required
-              ? "録画リンクは未登録です。セッション終了後に教師が登録してください。"
-              : "このセッションは録画対象ではありません。"}
-          </p>
-        )}
-
-        {isTeacher && session.recording_required ? (
-          <form action={saveRecordingUrl} className="mt-4">
-            <input type="hidden" name="sessionId" value={session.id} />
-            <Field label="録画リンク" htmlFor="recordingUrl" hint="(https:// のURL)">
-              <Input
-                id="recordingUrl"
-                name="recordingUrl"
-                type="url"
-                defaultValue={session.recording_url ?? ""}
-                placeholder="https://drive.google.com/..."
-              />
-            </Field>
-            <Button type="submit" className="mt-2">
-              録画リンクを保存する
-            </Button>
-          </form>
-        ) : null}
-      </section>
-
-      {isTeacher && session.status === "completed" ? (
-        <section className="mt-4 rounded border p-4">
-          <h2 className="text-sm font-medium text-gray-500">ボランティアの評価</h2>
-          <form action={saveVolunteerReview} className="mt-3 space-y-3">
-            <input type="hidden" name="sessionId" value={session.id} />
-            <Field label="評価" htmlFor="rating">
-              <Select id="rating" name="rating" defaultValue={String(review?.rating ?? 5)}>
-                <option value="5">5（とても良かった）</option>
-                <option value="4">4（良かった）</option>
-                <option value="3">3（ふつう）</option>
-                <option value="2">2（あまり良くなかった）</option>
-                <option value="1">1（良くなかった）</option>
-              </Select>
-            </Field>
-            <Field label="コメント" htmlFor="comment" hint="(任意)">
-              <textarea
-                id="comment"
-                name="comment"
-                rows={3}
-                defaultValue={review?.comment ?? ""}
-                className="mt-1 w-full rounded border p-2"
-              />
-            </Field>
-            <Button type="submit">{review ? "評価を更新する" : "評価を登録する"}</Button>
-          </form>
-        </section>
-      ) : null}
-
-      <div className="mt-4 rounded border border-dashed p-4 text-sm text-gray-400">
-        ホワイトボード（準備中）
+            {isTeacher && session.recording_required ? (
+              <form action={saveRecordingUrl} className="mt-4">
+                <input type="hidden" name="sessionId" value={session.id} />
+                <Field label="録画リンク" htmlFor="recordingUrl" hint="(https:// のURL)">
+                  <Input
+                    id="recordingUrl"
+                    name="recordingUrl"
+                    type="url"
+                    defaultValue={session.recording_url ?? ""}
+                    placeholder="https://drive.google.com/..."
+                  />
+                </Field>
+                <Button type="submit" className="mt-2">
+                  録画リンクを保存する
+                </Button>
+              </form>
+            ) : null}
+          </section>
+        </aside>
       </div>
     </main>
   );

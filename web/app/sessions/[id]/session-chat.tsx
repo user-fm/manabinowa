@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import { sendChatMessage } from "./actions";
 
 // E-10 セッション内チャット。
@@ -67,12 +69,25 @@ export function SessionChat({
     };
   }, [sessionId]);
 
+  // 送信後の revalidatePath でサーバーから新しい initialMessages が渡るが、
+  // useState の初期値は初回マウント時しか反映されない。Realtime で受け取った分と
+  // 取り違えないよう id でマージして取り込む。
+  useEffect(() => {
+    setMessages((prev) => {
+      const byId = new Map<number, ChatMessage>();
+      for (const m of prev) byId.set(m.id, m);
+      for (const m of initialMessages) byId.set(m.id, m);
+      return [...byId.values()].sort((a, b) => a.id - b.id);
+    });
+  }, [initialMessages]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 件数の変化を最下部へ再スクロールする起点として使う
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
-  }, []);
+  }, [messages.length]);
 
   return (
-    <section className="rounded border p-4">
+    <section className={cn(cardClass, "p-4")}>
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-gray-500">チャット</h2>
         {connection === "connecting" ? (
@@ -140,7 +155,7 @@ export function SessionChat({
             maxLength={2000}
             autoComplete="off"
             placeholder="メッセージを入力"
-            className="flex-1 rounded border px-3 py-2 text-sm"
+            className="flex-1 rounded border border-gray-300 bg-white px-3 py-2 text-sm"
           />
           <Button type="submit">送信</Button>
         </form>

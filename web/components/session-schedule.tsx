@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 
 // D-16: 成立したセッションの予定一覧。教師・ボランティア双方の画面で使う。
 // これからの予定は日付の早い順、終了済みは新しい順に並べる。
@@ -64,7 +66,7 @@ export function SessionSchedule({ items }: { items: ScheduleItem[] }) {
 function ScheduleRow({ item }: { item: ScheduleItem }) {
   return (
     <li>
-      <Link href={`/sessions/${item.id}`} className="block rounded border p-4 hover:bg-gray-50">
+      <Link href={`/sessions/${item.id}`} className={cn(cardClass, cardHoverClass, "block p-4")}>
         <div className="flex items-center justify-between">
           <span className="font-medium">
             {item.subject}（{item.grade}）

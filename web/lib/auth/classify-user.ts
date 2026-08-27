@@ -15,7 +15,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export type AppRole = "teacher" | "student" | "volunteer" | "community" | "admin" | "board";
 
 // 校内(学校 Workspace ドメイン)ユーザーが選べるロール。
-export const SCHOOL_ROLES = ["teacher", "student", "admin", "board"] as const satisfies readonly AppRole[];
+export const SCHOOL_ROLES = [
+  "teacher",
+  "student",
+  "admin",
+  "board",
+] as const satisfies readonly AppRole[];
 // 個人(個人 Gmail 等)ユーザーが選べるロール。運営審査前提(account_status=pending)。
 export const PERSONAL_ROLES = ["volunteer", "community"] as const satisfies readonly AppRole[];
 

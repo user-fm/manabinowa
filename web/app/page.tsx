@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/ui/app-header";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { getSessionProfile, type Role } from "@/lib/auth";
 import { ROLE_LABEL } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 
 type MenuItem = { label: string; href: string; desc: string };
 
@@ -49,10 +51,8 @@ const ROLE_MENU: Record<Role, MenuItem[]> = {
     { label: "ブロックリスト", href: "/admin/blocks", desc: "申請と審査状況の確認" },
     { label: "セッション一覧", href: "/admin/sessions", desc: "自校のセッションを確認" },
   ],
-  board: [
-    { label: "月次監査レポート", href: "/board/reports", desc: "自治体内の活動レポート" },
-    { label: "統計ダッシュボード", href: "/board/stats", desc: "利用状況の統計" },
-  ],
+  // 未実装のためメニューからは外している(ページ自体は /board/reports, /board/stats, /student/reflections に残存)。
+  board: [],
 };
 
 export default async function Home() {
@@ -64,7 +64,10 @@ export default async function Home() {
       <main className="mx-auto mt-20 max-w-sm px-4 text-center">
         <h1 className="text-2xl font-bold">まなびのわ</h1>
         <p className="mt-2 text-sm text-gray-600">途切れない、学びのサイクル</p>
-        <Link href="/login" className="mt-6 inline-block rounded border px-4 py-2 text-sm">
+        <Link
+          href="/login"
+          className="mt-6 inline-block rounded border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:border-[#155c38]"
+        >
           ログイン
         </Link>
       </main>
@@ -79,9 +82,9 @@ export default async function Home() {
   return (
     <>
       <AppHeader userName={profile.fullName} role={profile.role} />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-sm text-gray-500">{ROLE_LABEL[profile.role]}のホーム</p>
-        <h1 className="mt-1 text-2xl font-bold">ようこそ、{profile.fullName} さん</h1>
+      <main className="mx-auto max-w-[960px] px-5 py-[25px]">
+        <p className="mt-6 text-sm text-gray-500">{ROLE_LABEL[profile.role]}のホーム</p>
+        <h1 className="mt-1 w-full text-2xl font-bold">ようこそ、{profile.fullName} さん</h1>
 
         {isPending ? (
           <p className="mt-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
@@ -91,12 +94,15 @@ export default async function Home() {
           </p>
         ) : null}
 
-        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <ul className="mt-6 grid gap-5 sm:grid-cols-3">
           {menu.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className="block rounded border p-4 hover:bg-gray-50">
-                <span className="font-medium">{item.label}</span>
-                <p className="mt-1 text-xs text-gray-500">{item.desc}</p>
+              <Link
+                href={item.href}
+                className={cn(cardClass, cardHoverClass, "block min-h-[140px]")}
+              >
+                <span className="text-lg font-medium">{item.label}</span>
+                <p className="mt-2 text-sm text-gray-500">{item.desc}</p>
               </Link>
             </li>
           ))}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cardClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import {
   COMMUNITY_CATEGORY_LABEL,
@@ -7,6 +8,7 @@ import {
   fmtDateTime,
 } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function CommunityRequestsPage() {
   const profile = await requireRole(["community"]);
@@ -24,7 +26,7 @@ export default async function CommunityRequestsPage() {
         <h1 className="text-xl font-bold">送信済みの依頼</h1>
         <Link
           href="/community/requests/new"
-          className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50"
+          className="rounded border px-3 py-1.5 text-sm bg-[#155c38] text-white hover:bg-[#124c2f]"
         >
           新しく依頼する
         </Link>
@@ -37,7 +39,7 @@ export default async function CommunityRequestsPage() {
       ) : (
         <ul className="mt-6 space-y-3">
           {requests.map((r) => (
-            <li key={r.id} className="rounded border p-4">
+            <li key={r.id} className={cn(cardClass, "p-4")}>
               <div className="flex items-center justify-between">
                 <span className="font-medium">{r.title}</span>
                 <span className="text-xs text-gray-500">

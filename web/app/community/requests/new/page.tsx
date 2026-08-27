@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { requireRole } from "@/lib/auth";
 import { COMMUNITY_CATEGORY_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -68,13 +69,7 @@ export default async function NewCommunityRequestPage({
           <Input id="title" name="title" required placeholder="例: 地域文化祭のポスター制作" />
         </Field>
         <Field label="依頼内容" htmlFor="detail">
-          <textarea
-            id="detail"
-            name="detail"
-            required
-            rows={4}
-            className="mt-1 w-full rounded border p-2"
-          />
+          <Textarea id="detail" name="detail" required rows={4} />
         </Field>
         <Field label="期日" htmlFor="dueDate" hint="(任意)">
           <Input id="dueDate" name="dueDate" type="date" />

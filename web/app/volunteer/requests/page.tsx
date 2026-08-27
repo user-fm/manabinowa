@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, MATCH_OFFER_STATUS_LABEL } from "@/lib/labels";
 import { offerDisplayStatus } from "@/lib/matching";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 import { acceptOffer, declineOffer } from "./actions";
 
 const ERROR_MESSAGE: Record<string, string> = {
@@ -95,7 +97,7 @@ export default async function VolunteerRequestsPage({
         ) : (
           <ul className="mt-3 space-y-3">
             {pending.map((o) => (
-              <li key={o.id} className="rounded border border-gray-900 p-4">
+              <li key={o.id} className={cn(cardClass, "border-gray-900 p-4")}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-medium">
                     {o.volunteer_requests?.subject}（{o.volunteer_requests?.grade}）
@@ -134,7 +136,7 @@ export default async function VolunteerRequestsPage({
           <h2 className="font-medium">返答済みの依頼</h2>
           <ul className="mt-3 space-y-2">
             {history.map((o) => (
-              <li key={o.id} className="rounded border p-3 text-sm">
+              <li key={o.id} className={cn(cardClass, "p-3 text-sm")}>
                 <div className="flex items-center justify-between">
                   <span>
                     {o.volunteer_requests?.subject}（{o.volunteer_requests?.grade}）
@@ -162,7 +164,7 @@ export default async function VolunteerRequestsPage({
         ) : (
           <ul className="mt-3 space-y-3">
             {requests.map((r) => (
-              <li key={r.id} className="rounded border p-4">
+              <li key={r.id} className={cn(cardClass, "p-4")}>
                 <span className="font-medium">
                   {r.subject}（{r.grade}）
                 </span>

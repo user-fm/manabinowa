@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Role } from "@/lib/auth";
@@ -5,10 +6,17 @@ import type { Role } from "@/lib/auth";
 // ログイン後の全ページ共通ヘッダー。メッセージは大人ロールのみ(F-MSG)。
 export function AppHeader({ userName, role }: { userName: string; role: Role }) {
   return (
-    <header className="border-b">
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
+    <header className="sticky top-0 z-50 border-b border-gray-300 bg-white">
+      <div className="mx-auto flex items-center justify-between px-7 py-3">
         <div className="flex items-center gap-5">
-          <Link href="/" className="text-lg font-bold">
+          <Link href="/" className="flex items-center gap-2 no-underline">
+            <Image
+              src="/img/logo_32.png"
+              alt="まなびのわ"
+              width={32}
+              height={32}
+              className="h-8 w-8"
+            />
             まなびのわ
           </Link>
           <nav className="flex items-center gap-4 text-sm text-gray-600">

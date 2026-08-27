@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, REQUEST_STATUS_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function TeacherRequestsPage() {
   const profile = await requireRole(["teacher"]);
@@ -19,7 +21,7 @@ export default async function TeacherRequestsPage() {
         <h1 className="text-xl font-bold">依頼の状況</h1>
         <Link
           href="/teacher/requests/new"
-          className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50"
+          className="rounded border px-3 py-1.5 text-sm bg-[#155c38] text-white hover:bg-[#124c2f]"
         >
           新しく依頼する
         </Link>
@@ -35,7 +37,7 @@ export default async function TeacherRequestsPage() {
             <li key={r.id}>
               <Link
                 href={`/teacher/requests/${r.id}`}
-                className="block rounded border p-4 hover:bg-gray-50"
+                className={cn(cardClass, cardHoverClass, "block")}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">

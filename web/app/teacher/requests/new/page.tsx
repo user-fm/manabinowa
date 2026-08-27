@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { requireRole } from "@/lib/auth";
 import { createRequest } from "./actions";
 
@@ -36,7 +37,10 @@ export default async function NewRequestPage({
         </p>
       ) : null}
 
-      <form action={createRequest} className="mt-6 space-y-4">
+      <form
+        action={createRequest}
+        className="mt-6 space-y-4 p-6 rounded-lg border border-gray-300 bg-white"
+      >
         <Field label="教科" htmlFor="subject">
           <Input id="subject" name="subject" required placeholder="例: 数学" />
         </Field>
@@ -47,13 +51,7 @@ export default async function NewRequestPage({
           <Input id="desiredAt" name="desiredAt" type="datetime-local" />
         </Field>
         <Field label="依頼内容" htmlFor="detail">
-          <textarea
-            id="detail"
-            name="detail"
-            required
-            rows={4}
-            className="mt-1 w-full rounded border p-2"
-          />
+          <Textarea id="detail" name="detail" required rows={4} />
         </Field>
         <Button type="submit">作成する</Button>
       </form>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { saveVolunteerProfile } from "./actions";
@@ -70,13 +71,7 @@ export default async function VolunteerProfilePage({
           />
         </Field>
         <Field label="自己紹介" htmlFor="intro" hint="(任意)">
-          <textarea
-            id="intro"
-            name="intro"
-            rows={4}
-            className="mt-1 w-full rounded border p-2"
-            defaultValue={offer?.intro ?? ""}
-          />
+          <Textarea id="intro" name="intro" rows={4} defaultValue={offer?.intro ?? ""} />
         </Field>
         <Button type="submit">{offer ? "更新する" : "登録する"}</Button>
       </form>

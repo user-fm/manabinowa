@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/ui/app-header";
 import { requireRole } from "@/lib/auth";
 
 export default async function BoardLayout({ children }: { children: ReactNode }) {
