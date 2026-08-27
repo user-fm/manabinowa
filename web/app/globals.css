@@ -20,10 +20,19 @@
 } */
 
 body {
-  background: transparent;
   position: relative;
   overflow-x: hidden;
   background: #f5f7f5;
+}
+
+/* 背景のぼかしグラデーションをゆっくり漂わせる。inset: -20% の余白内で動かす。 */
+@keyframes floatBg {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, -4%, 0) scale(1.08);
+  }
 }
 
 body::before,
@@ -46,7 +55,16 @@ body::before {
 
 body::after {
   opacity: 0.45;
+  /* 2枚が同じ動きにならないよう開始位置をずらす */
+  animation-delay: -9s;
   background:
     radial-gradient(circle at 70% 25%, #d5f6c8 0%, transparent 45%),
     radial-gradient(circle at 25% 80%, #fff9d6 0%, transparent 35%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }

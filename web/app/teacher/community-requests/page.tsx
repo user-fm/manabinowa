@@ -1,3 +1,4 @@
+import { cardClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import {
   COMMUNITY_CATEGORY_LABEL,
@@ -6,6 +7,7 @@ import {
   fmtDateTime,
 } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function TeacherCommunityRequestsPage() {
   const profile = await requireRole(["teacher"]);
@@ -37,7 +39,7 @@ export default async function TeacherCommunityRequestsPage() {
       ) : (
         <ul className="mt-6 space-y-3">
           {requests.map((r) => (
-            <li key={r.id} className="rounded border p-4">
+            <li key={r.id} className={cn(cardClass, "p-4")}>
               <div className="flex items-center justify-between">
                 <span className="font-medium">{r.title}</span>
                 <span className="text-xs text-gray-500">

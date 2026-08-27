@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function AdminSessionsPage() {
   const profile = await requireRole(["admin"]);
@@ -34,10 +36,7 @@ export default async function AdminSessionsPage() {
             const req = s.volunteer_requests as { subject?: string; grade?: string } | null;
             return (
               <li key={s.id}>
-                <Link
-                  href={`/sessions/${s.id}`}
-                  className="block p-4 rounded-lg border border-gray-300 bg-white p-6 transition-all hover:border-[#155c38] hover:shadow-md"
-                >
+                <Link href={`/sessions/${s.id}`} className={cn(cardClass, cardHoverClass, "block")}>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">
                       {req?.subject ?? "—"}（{req?.grade ?? "—"}）

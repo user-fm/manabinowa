@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { requireProfile } from "@/lib/auth";
 import { INQUIRY_CATEGORY_LABEL } from "@/lib/labels";
 import { createInquiry } from "./actions";
@@ -53,13 +54,7 @@ export default async function NewInquiryPage({
           <Input id="subject" name="subject" required />
         </Field>
         <Field label="内容" htmlFor="body">
-          <textarea
-            id="body"
-            name="body"
-            required
-            rows={5}
-            className="mt-1 w-full rounded border p-2"
-          />
+          <Textarea id="body" name="body" required rows={5} />
         </Field>
         <Button type="submit">送信する</Button>
       </form>

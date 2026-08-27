@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { cardClass, cardPlaceholderClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import {
   fmtDateTime,
@@ -10,6 +11,7 @@ import {
 } from "@/lib/labels";
 import { findCandidates, offerDisplayStatus } from "@/lib/matching";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 import { offerToVolunteer, regenerateCandidates } from "./actions";
 
 const ERROR_MESSAGE: Record<string, string> = {
@@ -102,7 +104,7 @@ export default async function TeacherRequestDetailPage({
         </p>
       ) : null}
 
-      <section className="mt-6 rounded border p-4">
+      <section className={cn(cardClass, "mt-6 p-4")}>
         <h2 className="text-sm font-medium text-gray-500">依頼内容</h2>
         <p className="mt-2 whitespace-pre-wrap text-sm">{request.detail}</p>
       </section>
@@ -133,7 +135,7 @@ export default async function TeacherRequestDetailPage({
         ) : (
           <ul className="mt-2 space-y-2">
             {offers.map((o) => (
-              <li key={o.id} className="rounded border p-3 text-sm">
+              <li key={o.id} className={cn(cardClass, "p-3 text-sm")}>
                 <div className="flex items-center justify-between">
                   <span>{(o.users as { full_name?: string } | null)?.full_name ?? "（不明）"}</span>
                   <span className="text-xs text-gray-500">
@@ -169,7 +171,7 @@ export default async function TeacherRequestDetailPage({
           ) : null}
 
           {candidates.length === 0 ? (
-            <div className="mt-3 rounded border border-dashed p-6 text-center">
+            <div className={cn(cardPlaceholderClass, "mt-3 text-center")}>
               <p className="text-sm text-gray-600">
                 条件に合うボランティアが見つかりませんでした。
               </p>
@@ -186,7 +188,7 @@ export default async function TeacherRequestDetailPage({
           ) : (
             <ul className="mt-3 space-y-3">
               {candidates.map((c) => (
-                <li key={c.offerId} className="rounded border p-4">
+                <li key={c.offerId} className={cn(cardClass, "p-4")}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-medium">{c.fullName}</span>
                     <span className="text-xs text-gray-500">

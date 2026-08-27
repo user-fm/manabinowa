@@ -1,6 +1,8 @@
+import { cardClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { BLOCK_STATUS_LABEL, fmtDateTime } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function AdminBlocksPage() {
   const profile = await requireRole(["admin"]);
@@ -24,7 +26,7 @@ export default async function AdminBlocksPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-xl font-bold">ブロックリスト</h1>
       <p className="mt-1 text-sm text-gray-500">
-        自校からの申請と審査状況です。新規申請は準備中です。
+        自校からの申請と審査状況です。申請は安全アラート画面から行えます。
       </p>
 
       {!blocks || blocks.length === 0 ? (
@@ -32,7 +34,7 @@ export default async function AdminBlocksPage() {
       ) : (
         <ul className="mt-6 space-y-3">
           {blocks.map((b) => (
-            <li key={b.id} className="rounded border p-4">
+            <li key={b.id} className={cn(cardClass, "p-4")}>
               <div className="flex items-center justify-between">
                 <span className="text-sm">{b.reason}</span>
                 <span className="text-xs text-gray-500">

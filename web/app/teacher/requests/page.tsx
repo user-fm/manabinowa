@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, REQUEST_STATUS_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function TeacherRequestsPage() {
   const profile = await requireRole(["teacher"]);
@@ -35,7 +37,7 @@ export default async function TeacherRequestsPage() {
             <li key={r.id}>
               <Link
                 href={`/teacher/requests/${r.id}`}
-                className="block p-4 rounded-lg border border-gray-300 bg-white p-6 transition-all hover:border-[#155c38] hover:shadow-md"
+                className={cn(cardClass, cardHoverClass, "block")}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">

@@ -50,13 +50,6 @@ export default async function SettingsPage() {
         <p className="mt-3 text-xs text-gray-400">プロフィールの編集は準備中です。</p>
       </section>
 
-      <section className="mt-4 border border-dashed rounded-lg border-gray-300 bg-white p-5">
-        <h2 className="font-medium text-gray-400">通知</h2>
-        <p className="mt-2 text-sm text-gray-400">
-          メール・プッシュ通知の設定がここに表示されます（準備中）。
-        </p>
-      </section>
-
       <section className="mt-4 rounded-lg border border-gray-300 bg-white p-5">
         <h2 className="font-medium">サポート</h2>
         <p className="mt-2 text-sm">

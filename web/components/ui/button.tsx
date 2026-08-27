@@ -12,7 +12,7 @@ export function Button({ className, variant = "primary", type = "button", ...pro
       className={cn(
         "rounded px-4 py-2 text-sm transition-colors disabled:opacity-50",
         variant === "primary" && "bg-[#155c38] text-white hover:bg-[#124c2f]",
-        variant === "outline" && "border hover:bg-gray-50",
+        variant === "outline" && "border border-gray-300 bg-white hover:bg-gray-50",
         className,
       )}
       {...props}

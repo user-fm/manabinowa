@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { cardClass, cardHoverClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function StudentSessionsPage() {
   const profile = await requireRole(["student"]);
@@ -38,7 +40,7 @@ export default async function StudentSessionsPage() {
             <li key={s.id}>
               <Link
                 href={`/sessions/${s.id}`}
-                className="block rounded border p-4 hover:bg-gray-50"
+                className={cn(cardClass, cardHoverClass, "block p-4")}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">

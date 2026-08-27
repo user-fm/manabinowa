@@ -1,6 +1,8 @@
+import { cardClass } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
 export default async function MessagesPage() {
   const profile = await requireRole(["teacher", "volunteer", "community", "admin", "board"]);
@@ -37,7 +39,7 @@ export default async function MessagesPage() {
       ) : (
         <ul className="mt-6 space-y-3">
           {threads.map((t) => (
-            <li key={t.id} className="rounded border p-4">
+            <li key={t.id} className={cn(cardClass, "p-4")}>
               <div className="flex items-center justify-between text-sm">
                 <span>スレッド</span>
                 <span className="text-xs text-gray-500">

@@ -65,7 +65,10 @@ export default async function OnboardingProfilePage({
         </p>
       ) : null}
 
-      <form action={completeOnboarding} className="mt-6 space-y-4 rounded-lg border border-gray-300 bg-white p-5">
+      <form
+        action={completeOnboarding}
+        className="mt-6 space-y-4 rounded-lg border border-gray-300 bg-white p-5"
+      >
         <Field label="役割" htmlFor="role">
           <Select id="role" name="role" required defaultValue="">
             <option value="">選択してください</option>
