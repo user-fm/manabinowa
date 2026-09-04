@@ -50,54 +50,58 @@ export default async function OnboardingProfilePage({
   const defaultName = (meta.full_name as string) ?? (meta.name as string) ?? "";
 
   return (
-    <main className="mx-auto mt-16 max-w-md px-4">
-      <h1 className="text-xl font-bold">登録を完了してください</h1>
-      <p className="mt-1 text-sm text-gray-600">{user.email}</p>
-      <p className="mt-1 text-xs text-gray-500">
-        {classification.kind === "school"
-          ? `${classification.school.name} の校内アカウントとして登録します`
-          : "個人アカウントとして登録します（ボランティア／地域）"}
-      </p>
-
-      {error ? (
-        <p className="mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-          {ERROR_MESSAGES[error] ?? ERROR_MESSAGES.invalid}
+    <main className="mx-auto w-full max-w-md flex-1 px-4 py-16">
+      <div className="rounded-lg border border-line bg-surface p-8 shadow-sm">
+        <h1 className="text-2xl font-bold tracking-wide">登録を完了してください</h1>
+        <p className="mt-2 text-sm font-bold text-brand-dark">{user.email}</p>
+        <p className="mt-1 text-xs font-medium leading-6 text-muted">
+          {classification.kind === "school"
+            ? `${classification.school.name} の校内アカウントとして登録します`
+            : "個人アカウントとして登録します（ボランティア／地域）"}
         </p>
-      ) : null}
 
-      <form action={completeOnboarding} className="mt-6 space-y-4">
-        <Field label="役割" htmlFor="role">
-          <Select id="role" name="role" required defaultValue="">
-            <option value="">選択してください</option>
-            {availableRoles.map((role) => (
-              <option key={role} value={role}>
-                {ROLE_LABELS[role]}
-              </option>
-            ))}
-          </Select>
-        </Field>
-
-        <Field label="氏名" htmlFor="fullName">
-          <Input id="fullName" name="fullName" defaultValue={defaultName} required />
-        </Field>
-
-        {availableRoles.includes("student") ? (
-          <Field
-            label="保護者メールアドレス"
-            htmlFor="parentEmail"
-            hint="(生徒として登録する場合は必須)"
-          >
-            <Input
-              id="parentEmail"
-              name="parentEmail"
-              type="email"
-              placeholder="parent@example.com"
-            />
-          </Field>
+        {error ? (
+          <p className="mt-6 rounded-md border border-red-300 bg-red-50 p-4 text-sm font-bold text-red-700">
+            {ERROR_MESSAGES[error] ?? ERROR_MESSAGES.invalid}
+          </p>
         ) : null}
 
-        <Button type="submit">登録する</Button>
-      </form>
+        <form action={completeOnboarding} className="mt-8 space-y-6">
+          <Field label="役割" htmlFor="role">
+            <Select id="role" name="role" required defaultValue="">
+              <option value="">選択してください</option>
+              {availableRoles.map((role) => (
+                <option key={role} value={role}>
+                  {ROLE_LABELS[role]}
+                </option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="氏名" htmlFor="fullName">
+            <Input id="fullName" name="fullName" defaultValue={defaultName} required />
+          </Field>
+
+          {availableRoles.includes("student") ? (
+            <Field
+              label="保護者メールアドレス"
+              htmlFor="parentEmail"
+              hint="(生徒として登録する場合は必須)"
+            >
+              <Input
+                id="parentEmail"
+                name="parentEmail"
+                type="email"
+                placeholder="parent@example.com"
+              />
+            </Field>
+          ) : null}
+
+          <Button type="submit" className="w-full">
+            登録する
+          </Button>
+        </form>
+      </div>
     </main>
   );
 }
