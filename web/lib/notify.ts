@@ -27,6 +27,29 @@ export type NotifyInput = {
 const FROM = process.env.MAIL_FROM ?? "まなびのわ <onboarding@resend.dev>";
 
 /**
+ * 本人の通知設定を見て、この種類のメールを送ってよいか判定する。
+ * 設定行が無い場合は既定で送る(オプトアウト方式)。判定に失敗した場合も送る側に倒す。
+ */
+async function wantsNotification(userId: string, category: NotificationCategory) {
+  const admin = createAdminClient();
+
+  const { data: prefs } = await admin
+    .from("notification_prefs")
+    .select("email_enabled")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (prefs?.email_enabled === false) return false;
+
+  const { data: row } = await admin
+    .from("notification_categories")
+    .select("enabled")
+    .eq("user_id", userId)
+    .eq("category", category)
+    .maybeSingle();
+  return row?.enabled !== false;
+}
+
+/**
  * メール通知を送る。送信可否に関わらず notification_logs に記録し、
  * 実送信できた場合のみ true を返す。通知の失敗で業務処理は止めない。
  */
@@ -37,6 +60,11 @@ export async function sendEmailNotification(input: NotifyInput): Promise<boolean
   if (!to) {
     const { data } = await admin.from("users").select("email").eq("id", input.userId).maybeSingle();
     to = data?.email ?? null;
+  }
+
+  // 宛先を明示している場合(保護者への同意メールなど)は、利用者本人の設定に依らず送る。
+  if (!input.email && !(await wantsNotification(input.userId, input.category))) {
+    return false;
   }
 
   const apiKey = process.env.RESEND_API_KEY;

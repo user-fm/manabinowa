@@ -72,22 +72,24 @@ export function SessionChat({
   }, []);
 
   return (
-    <section className="rounded border p-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-gray-500">チャット</h2>
+    <section className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-xs font-bold text-muted">チャット</h2>
         {connection === "connecting" ? (
-          <span className="text-xs text-gray-400">接続しています…</span>
+          <span className="text-xs font-medium text-muted">接続しています…</span>
         ) : null}
         {connection === "error" ? (
-          <span className="text-xs text-red-600">
+          <span className="text-xs font-bold text-red-600">
             リアルタイム接続に失敗しました。再読み込みしてください。
           </span>
         ) : null}
       </div>
 
-      <div className="mt-3 max-h-80 space-y-3 overflow-y-auto">
+      <div className="mt-4 max-h-80 space-y-4 overflow-y-auto">
         {messages.length === 0 ? (
-          <p className="py-6 text-center text-sm text-gray-400">まだメッセージはありません。</p>
+          <p className="py-10 text-center text-sm font-medium text-muted">
+            まだメッセージはありません。
+          </p>
         ) : (
           messages.map((message) => {
             const isMine = message.sender_id === currentUserId;
@@ -96,9 +98,13 @@ export function SessionChat({
               : "システム";
             return (
               <div key={message.id} className={isMine ? "text-right" : "text-left"}>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs font-bold text-muted">
                   {name}
-                  <time className="ml-2" dateTime={message.created_at} suppressHydrationWarning>
+                  <time
+                    className="ml-2 font-medium"
+                    dateTime={message.created_at}
+                    suppressHydrationWarning
+                  >
                     {new Date(message.created_at).toLocaleTimeString("ja-JP", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -106,8 +112,8 @@ export function SessionChat({
                   </time>
                 </p>
                 <p
-                  className={`mt-1 inline-block max-w-[85%] whitespace-pre-wrap break-words rounded px-3 py-2 text-left text-sm ${
-                    isMine ? "bg-gray-900 text-white" : "bg-gray-100"
+                  className={`mt-1.5 inline-block max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-4 py-2.5 text-left text-sm font-medium leading-6 ${
+                    isMine ? "bg-brand text-white" : "border border-line bg-background"
                   }`}
                 >
                   {message.body}
@@ -126,7 +132,7 @@ export function SessionChat({
             await sendChatMessage(formData);
             formRef.current?.reset();
           }}
-          className="mt-3 flex gap-2"
+          className="mt-4 flex gap-2 border-t border-line pt-4"
         >
           <input type="hidden" name="sessionId" value={sessionId} />
           <label htmlFor="chat-body" className="sr-only">
@@ -140,12 +146,12 @@ export function SessionChat({
             maxLength={2000}
             autoComplete="off"
             placeholder="メッセージを入力"
-            className="flex-1 rounded border px-3 py-2 text-sm"
+            className="min-h-12 flex-1 rounded-md border border-line bg-surface px-3.5 text-sm font-medium outline-none transition-colors placeholder:font-normal placeholder:text-muted/70 focus:border-brand focus:ring-2 focus:ring-brand-soft"
           />
           <Button type="submit">送信</Button>
         </form>
       ) : (
-        <p className="mt-3 text-xs text-gray-400">閲覧のみのため投稿できません。</p>
+        <p className="mt-4 text-xs font-medium text-muted">閲覧のみのため投稿できません。</p>
       )}
     </section>
   );

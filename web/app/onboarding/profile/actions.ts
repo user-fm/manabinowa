@@ -57,7 +57,7 @@ export async function completeOnboarding(formData: FormData) {
     finalSchoolId = school.id;
     municipalityCode = school.municipality_code;
   }
-  
+
   // B-15/B-16: volunteer/community は運営審査、生徒は保護者同意(K-13)が
   // 完了するまで pending。教師・管理者・教委は即時 active。
   const accountStatus =
