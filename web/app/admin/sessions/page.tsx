@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { Badge, toneForStatus } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { PageHeader } from "@/components/ui/page-header";
 import { requireRole } from "@/lib/auth";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -8,8 +12,10 @@ export default async function AdminSessionsPage() {
 
   if (!profile.schoolId) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-sm text-red-600">学校が未設定です。登録をやり直してください。</p>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+        <Card className="border-red-300 bg-red-50 text-sm font-bold text-red-700">
+          学校が未設定です。登録をやり直してください。
+        </Card>
       </main>
     );
   }
@@ -22,31 +28,40 @@ export default async function AdminSessionsPage() {
     .order("scheduled_at", { ascending: false, nullsFirst: false });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold">セッション一覧</h1>
-      <p className="mt-1 text-sm text-gray-500">自校で行われるセッションの一覧です。</p>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <PageHeader
+        eyebrow="学校管理者"
+        title="セッション一覧"
+        lead="自校で行われるオンライン指導の一覧です。内容の確認ができます。"
+      />
 
       {!sessions || sessions.length === 0 ? (
-        <p className="mt-6 text-sm text-gray-500">セッションはまだありません。</p>
+        <Card className="border-dashed py-12 text-center">
+          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <Icon name="video" className="size-6" />
+          </span>
+          <p className="mt-4 text-sm font-bold">セッションはまだありません</p>
+        </Card>
       ) : (
-        <ul className="mt-6 space-y-3">
+        <ul className="space-y-3">
           {sessions.map((s) => {
             const req = s.volunteer_requests as { subject?: string; grade?: string } | null;
             return (
               <li key={s.id}>
-                <Link
-                  href={`/sessions/${s.id}`}
-                  className="block rounded border p-4 hover:bg-gray-50"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">
-                      {req?.subject ?? "—"}（{req?.grade ?? "—"}）
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {SESSION_STATUS_LABEL[s.status] ?? s.status}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">日時: {fmtDateTime(s.scheduled_at)}</p>
+                <Link href={`/sessions/${s.id}`} className="block">
+                  <Card className="transition-all hover:border-brand hover:shadow-md">
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="text-base font-bold">
+                        {req?.subject ?? "—"}（{req?.grade ?? "—"}）
+                      </span>
+                      <Badge tone={toneForStatus(s.status)}>
+                        {SESSION_STATUS_LABEL[s.status] ?? s.status}
+                      </Badge>
+                    </div>
+                    <p className="mt-3 text-xs font-medium text-muted">
+                      日時: {fmtDateTime(s.scheduled_at)}
+                    </p>
+                  </Card>
                 </Link>
               </li>
             );

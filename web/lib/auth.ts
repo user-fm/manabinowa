@@ -10,6 +10,8 @@ export type Profile = {
   fullName: string;
   accountStatus: string;
   schoolId: string | null;
+  /** 教育委員会の所管自治体。学校所属ロールは school 経由で導出するため null */
+  municipalityCode: string | null;
 };
 
 export async function getAuthUser() {
@@ -31,7 +33,7 @@ export async function getSessionProfile(): Promise<{
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("users")
-    .select("id, role, full_name, account_status, school_id")
+    .select("id, role, full_name, account_status, school_id, municipality_code")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -48,6 +50,7 @@ export async function getSessionProfile(): Promise<{
         fullName: data.full_name,
         accountStatus: data.account_status,
         schoolId: data.school_id,
+        municipalityCode: data.municipality_code,
       }
     : null;
   return { userId: user.id, email: user.email ?? "", profile };
