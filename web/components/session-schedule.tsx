@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Badge, toneForStatus } from "@/components/ui/badge";
+import { Card, Section } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { fmtDateTime, SESSION_STATUS_LABEL } from "@/lib/labels";
 
 // D-16: 成立したセッションの予定一覧。教師・ボランティア双方の画面で使う。
@@ -10,8 +13,8 @@ export type ScheduleItem = {
   status: string;
   subject: string;
   grade: string;
-  /** 相手方の表示名(教師なら担当ボランティア、ボランティアなら学校) */
-  counterpart: string;
+  /** 相手方の表示名(教師なら担当ボランティア、ボランティアなら学校)。生徒画面では省略 */
+  counterpart?: string;
 };
 
 const CLOSED_STATUSES = new Set(["completed", "cancelled"]);
@@ -26,18 +29,25 @@ export function SessionSchedule({ items }: { items: ScheduleItem[] }) {
 
   if (items.length === 0) {
     return (
-      <p className="mt-6 text-sm text-gray-500">
-        セッションはまだありません。依頼が成立するとここに表示されます。
-      </p>
+      <Card className="border-dashed py-12 text-center">
+        <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <Icon name="video" className="size-6" />
+        </span>
+        <p className="mt-4 text-sm font-bold">セッションはまだありません</p>
+        <p className="mt-2 text-xs font-medium text-muted">
+          依頼が成立すると、ここに予定が表示されます。
+        </p>
+      </Card>
     );
   }
 
   return (
     <>
-      <section className="mt-6">
-        <h2 className="font-medium">これからの予定</h2>
+      <Section title="これからの予定" className="mt-0">
         {upcoming.length === 0 ? (
-          <p className="mt-2 text-sm text-gray-500">予定されているセッションはありません。</p>
+          <p className="mt-3 text-sm font-medium text-muted">
+            予定されているセッションはありません。
+          </p>
         ) : (
           <ul className="mt-3 space-y-3">
             {upcoming.map((s) => (
@@ -45,17 +55,16 @@ export function SessionSchedule({ items }: { items: ScheduleItem[] }) {
             ))}
           </ul>
         )}
-      </section>
+      </Section>
 
       {past.length > 0 ? (
-        <section className="mt-8">
-          <h2 className="font-medium">終了したセッション</h2>
+        <Section title="終了したセッション">
           <ul className="mt-3 space-y-3">
             {past.map((s) => (
               <ScheduleRow key={s.id} item={s} />
             ))}
           </ul>
-        </section>
+        </Section>
       ) : null}
     </>
   );
@@ -64,18 +73,26 @@ export function SessionSchedule({ items }: { items: ScheduleItem[] }) {
 function ScheduleRow({ item }: { item: ScheduleItem }) {
   return (
     <li>
-      <Link href={`/sessions/${item.id}`} className="block rounded border p-4 hover:bg-gray-50">
-        <div className="flex items-center justify-between">
-          <span className="font-medium">
-            {item.subject}（{item.grade}）
-          </span>
-          <span className="text-xs text-gray-500">
-            {SESSION_STATUS_LABEL[item.status] ?? item.status}
-          </span>
-        </div>
-        <p className="mt-1 text-xs text-gray-500">
-          日時: {fmtDateTime(item.scheduledAt)} ／ {item.counterpart}
-        </p>
+      <Link href={`/sessions/${item.id}`} className="block">
+        <Card className="transition-all hover:border-brand hover:shadow-md">
+          <div className="flex items-start justify-between gap-3">
+            <span className="flex items-center gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                <Icon name="video" className="size-5" />
+              </span>
+              <span className="text-base font-bold">
+                {item.subject}（{item.grade}）
+              </span>
+            </span>
+            <Badge tone={toneForStatus(item.status)}>
+              {SESSION_STATUS_LABEL[item.status] ?? item.status}
+            </Badge>
+          </div>
+          <p className="mt-3 text-xs font-medium text-muted">
+            日時: {fmtDateTime(item.scheduledAt)}
+            {item.counterpart ? ` ／ ${item.counterpart}` : null}
+          </p>
+        </Card>
       </Link>
     </li>
   );

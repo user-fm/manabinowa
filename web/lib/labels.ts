@@ -75,6 +75,25 @@ export const INQUIRY_CATEGORY_LABEL: Record<string, string> = {
   other: "その他",
 };
 
+/** 通知の種類(notification_category)。設定画面での並び順もこの順に従う。 */
+export const NOTIFICATION_CATEGORIES = [
+  "matching",
+  "session_reminder",
+  "community",
+  "safety_alert",
+  "message",
+  "consent",
+] as const;
+
+export const NOTIFICATION_CATEGORY_LABEL: Record<string, { label: string; desc: string }> = {
+  matching: { label: "マッチング", desc: "依頼の提示や、承諾・辞退のお知らせ" },
+  session_reminder: { label: "セッションの予定", desc: "指導の前日リマインド" },
+  community: { label: "地域連携", desc: "地域からの申し出や、その受入結果" },
+  safety_alert: { label: "安全アラート", desc: "AI監視が検知した内容のお知らせ" },
+  message: { label: "メッセージ", desc: "他の利用者からのメッセージ" },
+  consent: { label: "保護者同意", desc: "同意のお願いと、その完了通知" },
+};
+
 /** 日時表示。null は「—」 */
 export function fmtDateTime(value: string | null | undefined): string {
   if (!value) return "—";

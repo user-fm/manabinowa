@@ -242,3 +242,41 @@ export async function endSession(formData: FormData) {
   revalidatePath(`/sessions/${sessionId}`);
   redirect(`/sessions/${sessionId}`);
 }
+
+/**
+ * E-04: 会議リンクの登録。教師のみ。
+ * Calendar API による自動発行ではなく教師が Meet で発行したリンクを貼る運用
+ */
+export async function saveMeetUrl(formData: FormData) {
+  const sessionId = String(formData.get("sessionId") ?? "");
+  const url = String(formData.get("meetUrl") ?? "").trim();
+  const profile = await requireProfile();
+  const { session, viewerRole } = await requireSessionAccess(sessionId, profile);
+
+  if (viewerRole !== "teacher") redirect(`/sessions/${sessionId}?error=forbidden`);
+  if (session.status === "cancelled") redirect(`/sessions/${sessionId}?error=closed`);
+
+  // 空文字は登録解除として扱う。値がある場合は https のみ許可する。
+  if (url) {
+    let valid = false;
+    try {
+      valid = new URL(url).protocol === "https:";
+    } catch {
+      valid = false;
+    }
+    if (!valid) redirect(`/sessions/${sessionId}?error=invalid_url`);
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("volunteer_sessions")
+    .update({ meet_url: url || null })
+    .eq("id", sessionId);
+  if (error) {
+    console.error("会議リンク保存失敗", error.message);
+    redirect(`/sessions/${sessionId}?error=db`);
+  }
+
+  revalidatePath(`/sessions/${sessionId}`);
+  redirect(`/sessions/${sessionId}?saved=meet`);
+}

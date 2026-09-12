@@ -1,3 +1,7 @@
+import { Badge, toneForStatus } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { PageHeader } from "@/components/ui/page-header";
 import { requireRole } from "@/lib/auth";
 import {
   COMMUNITY_CATEGORY_LABEL,
@@ -26,30 +30,38 @@ export default async function TeacherCommunityRequestsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold">地域からの依頼</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        自校に届いた地域からの申し出です。受入・見送りの操作は準備中です。
-      </p>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <PageHeader
+        eyebrow="教師"
+        title="地域からの依頼"
+        lead="自校に届いた地域からの申し出です。受入・見送りの操作は準備中です。"
+      />
 
       {!requests || requests.length === 0 ? (
-        <p className="mt-6 text-sm text-gray-500">届いている依頼はまだありません。</p>
+        <Card className="border-dashed py-12 text-center">
+          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <Icon name="inbox" className="size-6" />
+          </span>
+          <p className="mt-4 text-sm font-bold">届いている依頼はまだありません</p>
+        </Card>
       ) : (
-        <ul className="mt-6 space-y-3">
+        <ul className="space-y-3">
           {requests.map((r) => (
-            <li key={r.id} className="rounded border p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{r.title}</span>
-                <span className="text-xs text-gray-500">
-                  {COMMUNITY_STATUS_LABEL[r.status] ?? r.status}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-gray-500">
-                {COMMUNITY_CATEGORY_LABEL[r.category] ?? r.category} ／ 依頼者:{" "}
-                {(r.users as { full_name?: string } | null)?.full_name ?? "（不明）"} ／ 期日:{" "}
-                {fmtDate(r.due_date)} ／ 受付: {fmtDateTime(r.created_at)}
-              </p>
-              <p className="mt-2 whitespace-pre-wrap text-sm">{r.detail}</p>
+            <li key={r.id}>
+              <Card>
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-base font-bold">{r.title}</span>
+                  <Badge tone={toneForStatus(r.status)}>
+                    {COMMUNITY_STATUS_LABEL[r.status] ?? r.status}
+                  </Badge>
+                </div>
+                <p className="mt-3 text-xs font-medium leading-6 text-muted">
+                  {COMMUNITY_CATEGORY_LABEL[r.category] ?? r.category} ／ 依頼者:{" "}
+                  {(r.users as { full_name?: string } | null)?.full_name ?? "（不明）"} ／ 期日:{" "}
+                  {fmtDate(r.due_date)} ／ 受付: {fmtDateTime(r.created_at)}
+                </p>
+                <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-7">{r.detail}</p>
+              </Card>
             </li>
           ))}
         </ul>

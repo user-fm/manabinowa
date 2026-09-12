@@ -1,4 +1,5 @@
 import { type ScheduleItem, SessionSchedule } from "@/components/session-schedule";
+import { PageHeader } from "@/components/ui/page-header";
 import { requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -26,8 +27,12 @@ export default async function VolunteerSessionsPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold">オンライン指導</h1>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <PageHeader
+        eyebrow="ボランティア"
+        title="オンライン指導"
+        lead="承諾した依頼のセッション予定と、実施済みの記録です。"
+      />
       <SessionSchedule items={items} />
     </main>
   );

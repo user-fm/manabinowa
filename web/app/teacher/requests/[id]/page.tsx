@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge, toneForStatus } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, Section } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { PageHeader } from "@/components/ui/page-header";
 import { requireRole } from "@/lib/auth";
 import {
   fmtDateTime,
@@ -78,156 +82,163 @@ export default async function TeacherRequestDetailPage({
   const notice = offered ? NOTICE_MESSAGE.offered : refreshed ? NOTICE_MESSAGE.refreshed : null;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <Link href="/teacher/requests" className="text-sm text-gray-500 hover:text-gray-900">
-        ← 依頼の状況へ戻る
-      </Link>
-
-      <h1 className="mt-3 text-xl font-bold">
-        {request.subject}（{request.grade}）
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        状態: {REQUEST_STATUS_LABEL[request.status] ?? request.status} ／ 希望日時:{" "}
-        {fmtDateTime(request.desired_at)} ／ 作成: {fmtDateTime(request.created_at)}
-      </p>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <PageHeader
+        eyebrow="教師"
+        title={`${request.subject}（${request.grade}）`}
+        lead={`状態: ${REQUEST_STATUS_LABEL[request.status] ?? request.status} ／ 希望日時: ${fmtDateTime(request.desired_at)} ／ 作成: ${fmtDateTime(request.created_at)}`}
+        back={{ href: "/teacher/requests", label: "依頼の状況へ戻る" }}
+      />
 
       {error ? (
-        <p className="mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+        <p className="mb-6 rounded-md border border-red-300 bg-red-50 p-4 text-sm font-bold text-red-700">
           {ERROR_MESSAGE[error] ?? "処理に失敗しました。"}
         </p>
       ) : null}
       {notice ? (
-        <p className="mt-4 rounded border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800">
+        <p className="mb-6 rounded-md border border-brand/40 bg-brand-soft p-4 text-sm font-bold text-brand-dark">
           {notice}
         </p>
       ) : null}
 
-      <section className="mt-6 rounded border p-4">
-        <h2 className="text-sm font-medium text-gray-500">依頼内容</h2>
-        <p className="mt-2 whitespace-pre-wrap text-sm">{request.detail}</p>
-      </section>
+      <Card>
+        <h2 className="text-xs font-bold text-muted">依頼内容</h2>
+        <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-7">{request.detail}</p>
+      </Card>
 
       {session ? (
-        <section className="mt-6 rounded border border-emerald-300 bg-emerald-50 p-4">
-          <h2 className="font-medium text-emerald-900">マッチングが成立しました</h2>
-          <p className="mt-1 text-sm text-emerald-800">
+        <Card className="mt-4 border-brand/40 bg-brand-soft">
+          <div className="flex items-center gap-2">
+            <span className="flex size-8 items-center justify-center rounded-full bg-brand text-white">
+              <Icon name="check" className="size-4" />
+            </span>
+            <h2 className="font-bold text-brand-dark">マッチングが成立しました</h2>
+          </div>
+          <p className="mt-3 text-sm font-medium text-brand-dark">
             担当: {(session.users as { full_name?: string } | null)?.full_name ?? "（不明）"} ／
             予定: {fmtDateTime(session.scheduled_at)} ／ 状態:{" "}
             {SESSION_STATUS_LABEL[session.status] ?? session.status}
           </p>
-          <Link
-            href={`/sessions/${session.id}`}
-            className="mt-3 inline-block text-sm text-emerald-900 underline"
-          >
-            セッション画面を開く
+          <Link href={`/sessions/${session.id}`} className="mt-4 inline-block">
+            <Button>セッション画面を開く</Button>
           </Link>
-        </section>
+        </Card>
       ) : null}
 
-      <section className="mt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-medium">提示中・提示済みの依頼</h2>
-        </div>
+      <Section title="提示中・提示済みの依頼">
         {!offers || offers.length === 0 ? (
-          <p className="mt-2 text-sm text-gray-500">まだ誰にも依頼を送っていません。</p>
+          <p className="mt-3 text-sm font-medium text-muted">まだ誰にも依頼を送っていません。</p>
         ) : (
-          <ul className="mt-2 space-y-2">
+          <ul className="mt-3 space-y-2">
             {offers.map((o) => (
-              <li key={o.id} className="rounded border p-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span>{(o.users as { full_name?: string } | null)?.full_name ?? "（不明）"}</span>
-                  <span className="text-xs text-gray-500">
-                    {MATCH_OFFER_STATUS_LABEL[offerDisplayStatus(o)] ?? offerDisplayStatus(o)}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  提示: {fmtDateTime(o.offered_at)} ／ 返答期限: {fmtDateTime(o.expires_at)}
-                </p>
+              <li key={o.id}>
+                <Card className="p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-bold">
+                      {(o.users as { full_name?: string } | null)?.full_name ?? "（不明）"}
+                    </span>
+                    <Badge tone={toneForStatus(offerDisplayStatus(o))}>
+                      {MATCH_OFFER_STATUS_LABEL[offerDisplayStatus(o)] ?? offerDisplayStatus(o)}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-xs font-medium text-muted">
+                    提示: {fmtDateTime(o.offered_at)} ／ 返答期限: {fmtDateTime(o.expires_at)}
+                  </p>
+                </Card>
               </li>
             ))}
           </ul>
         )}
-      </section>
+      </Section>
 
       {isSettled ? null : (
-        <section className="mt-8">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="font-medium">マッチング候補</h2>
+        <Section
+          title="マッチング候補"
+          action={
             <form action={regenerateCandidates}>
               <input type="hidden" name="requestId" value={request.id} />
               <Button type="submit" variant="outline">
                 候補を再検索
               </Button>
             </form>
-          </div>
-
+          }
+        >
           {usesKeywordMatch ? (
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-3 text-xs font-medium leading-6 text-muted">
               ※ AI意味検索が未設定のため、教科・学年の一致で候補を表示しています。
               この場合は適合度ではなく、一致した条件を表示します。
             </p>
           ) : null}
 
           {candidates.length === 0 ? (
-            <div className="mt-3 rounded border border-dashed p-6 text-center">
-              <p className="text-sm text-gray-600">
-                条件に合うボランティアが見つかりませんでした。
-              </p>
-              <p className="mt-1 text-xs text-gray-500">
+            <Card className="mt-3 border-dashed py-12 text-center">
+              <p className="text-sm font-bold">条件に合うボランティアが見つかりませんでした</p>
+              <p className="mt-2 text-xs font-medium text-muted">
                 教科・学年・希望日時の条件を広げると見つかりやすくなります。
               </p>
-              <Link
-                href="/teacher/requests/new"
-                className="mt-3 inline-block text-sm text-gray-900 underline"
-              >
-                条件を変えて新しく依頼する
+              <Link href="/teacher/requests/new" className="mt-6 inline-block">
+                <Button variant="outline">条件を変えて新しく依頼する</Button>
               </Link>
-            </div>
+            </Card>
           ) : (
             <ul className="mt-3 space-y-3">
               {candidates.map((c) => (
-                <li key={c.offerId} className="rounded border p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium">{c.fullName}</span>
-                    <span className="text-xs text-gray-500">
+                <li key={c.offerId}>
+                  <Card>
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <span className="flex items-center gap-3">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                          <Icon name="user" className="size-5" />
+                        </span>
+                        <span className="text-base font-bold">{c.fullName}</span>
+                      </span>
                       {/* 適合度(類似度)は AI意味検索のときだけ出す。
                           条件一致のスコアは意味が違うため、一致した条件で示す。 */}
-                      {c.matchType === "vector" ? `適合度 ${Math.round(c.score * 100)}％ ／ ` : ""}
+                      {c.matchType === "vector" ? (
+                        <Badge tone="brand">適合度 {Math.round(c.score * 100)}％</Badge>
+                      ) : null}
+                    </div>
+
+                    <p className="mt-3 text-xs font-medium text-muted">
                       実績 {c.sessionCount}回 ／ 評価{" "}
                       {c.ratingAvg === null ? "—" : c.ratingAvg.toFixed(1)}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">
-                    教科: {c.subjects.join("、") || "—"} ／ 学年: {c.grades.join("、") || "—"}
-                  </p>
-                  {c.matchType === "keyword" && matchedConditions(c, request).length > 0 ? (
-                    <ul className="mt-2 flex flex-wrap gap-1">
-                      {matchedConditions(c, request).map((label) => (
-                        <li
-                          key={label}
-                          className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-                        >
-                          {label}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  {c.availability ? (
-                    <p className="mt-1 text-xs text-gray-500">対応可能: {c.availability}</p>
-                  ) : null}
-                  {c.intro ? (
-                    <p className="mt-2 line-clamp-3 whitespace-pre-wrap text-sm">{c.intro}</p>
-                  ) : null}
-                  <form action={offerToVolunteer} className="mt-3">
-                    <input type="hidden" name="requestId" value={request.id} />
-                    <input type="hidden" name="volunteerId" value={c.volunteerId} />
-                    <Button type="submit">この方に依頼する</Button>
-                  </form>
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-muted">
+                      教科: {c.subjects.join("、") || "—"} ／ 学年: {c.grades.join("、") || "—"}
+                    </p>
+                    {c.availability ? (
+                      <p className="mt-1 text-xs font-medium text-muted">
+                        対応可能: {c.availability}
+                      </p>
+                    ) : null}
+
+                    {c.matchType === "keyword" && matchedConditions(c, request).length > 0 ? (
+                      <ul className="mt-3 flex flex-wrap gap-2">
+                        {matchedConditions(c, request).map((label) => (
+                          <li key={label}>
+                            <Badge tone="brand">{label}</Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+
+                    {c.intro ? (
+                      <p className="mt-4 line-clamp-3 whitespace-pre-wrap text-sm leading-7">
+                        {c.intro}
+                      </p>
+                    ) : null}
+
+                    <form action={offerToVolunteer} className="mt-5 border-t border-line pt-5">
+                      <input type="hidden" name="requestId" value={request.id} />
+                      <input type="hidden" name="volunteerId" value={c.volunteerId} />
+                      <Button type="submit">この方に依頼する</Button>
+                    </form>
+                  </Card>
                 </li>
               ))}
             </ul>
           )}
-        </section>
+        </Section>
       )}
     </main>
   );
