@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/ui/app-header";
 import { requireRole } from "@/lib/auth";
 
 // ロール間メッセージは大人のみ(F-MSG。生徒は対象外)
